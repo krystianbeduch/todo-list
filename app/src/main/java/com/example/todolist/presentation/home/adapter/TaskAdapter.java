@@ -1,4 +1,4 @@
-package com.example.todolist.ui.home;
+package com.example.todolist.presentation.home.adapter;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,7 +9,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.todolist.R;
-import com.example.todolist.ui.data.model.Task;
+import com.example.todolist.domain.model.Task;
 
 import java.util.List;
 
@@ -49,7 +49,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
     public void onBindViewHolder(@NonNull TaskAdapter.TaskViewHolder holder, int position) {
         Task task = tasks.get(position);
         holder.titleView.setText(task.getTitle());
-        holder.deadlineView.setText("Do:" + task.getDeadLine());
+        holder.deadlineView.setText("Deadline: " + task.getDeadLine());
     }
 
     @Override

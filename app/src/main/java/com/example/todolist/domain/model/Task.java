@@ -1,13 +1,28 @@
-package com.example.todolist.ui.data.model;
+package com.example.todolist.domain.model;
 
+import androidx.room.ColumnInfo;
+import androidx.room.Entity;
+import androidx.room.PrimaryKey;
+
+@Entity
 public class Task {
+    @PrimaryKey(autoGenerate = true)
     private int id;
+
     private String title;
+    @ColumnInfo(name = "dead_line")
     private String deadLine;
+    @ColumnInfo(name = "is_done")
     private boolean isDone;
 
-    public Task(int id, String title, String deadLine, boolean isDone) {
-        this.id = id;
+//    public Task(int id, String title, String deadLine, boolean isDone) {
+//        this.id = id;
+//        this.title = title;
+//        this.deadLine = deadLine;
+//        this.isDone = isDone;
+//    }
+
+    public Task(String title, String deadLine, boolean isDone) {
         this.title = title;
         this.deadLine = deadLine;
         this.isDone = isDone;
