@@ -1,19 +1,31 @@
 package com.example.todolist.domain.model;
 
+import androidx.annotation.NonNull;
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
+
+import java.time.LocalDateTime;
 
 @Entity
 public class Task {
     @PrimaryKey(autoGenerate = true)
     private int id;
 
+    @NonNull
     private String title;
     @ColumnInfo(name = "dead_line")
-    private String deadLine;
+    private LocalDateTime deadline;
     @ColumnInfo(name = "is_done")
+    @NonNull
     private boolean isDone;
+
+    @ColumnInfo(name = "priority")
+    @NonNull
+    private Priority priority;
+    @ColumnInfo(name = "created_at")
+    @NonNull
+    private LocalDateTime createdAt;
 
 //    public Task(int id, String title, String deadLine, boolean isDone) {
 //        this.id = id;
@@ -22,10 +34,13 @@ public class Task {
 //        this.isDone = isDone;
 //    }
 
-    public Task(String title, String deadLine, boolean isDone) {
+
+    public Task(@NonNull String title, LocalDateTime deadline, boolean isDone, @NonNull Priority priority, @NonNull LocalDateTime createdAt) {
         this.title = title;
-        this.deadLine = deadLine;
+        this.deadline = deadline;
         this.isDone = isDone;
+        this.priority = priority;
+        this.createdAt = createdAt;
     }
 
     public int getId() {
@@ -36,20 +51,21 @@ public class Task {
         this.id = id;
     }
 
+    @NonNull
     public String getTitle() {
         return title;
     }
 
-    public void setTitle(String title) {
+    public void setTitle(@NonNull String title) {
         this.title = title;
     }
 
-    public String getDeadLine() {
-        return deadLine;
+    public LocalDateTime getDeadline() {
+        return deadline;
     }
 
-    public void setDeadLine(String deadLine) {
-        this.deadLine = deadLine;
+    public void setDeadline(LocalDateTime deadline) {
+        this.deadline = deadline;
     }
 
     public boolean isDone() {
@@ -58,5 +74,23 @@ public class Task {
 
     public void setDone(boolean done) {
         isDone = done;
+    }
+
+    @NonNull
+    public Priority getPriority() {
+        return priority;
+    }
+
+    public void setPriority(@NonNull Priority priority) {
+        this.priority = priority;
+    }
+
+    @NonNull
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(@NonNull LocalDateTime createdAt) {
+        this.createdAt = createdAt;
     }
 }

@@ -12,42 +12,55 @@ import com.example.todolist.domain.repository.TaskRepository;
 import java.util.List;
 
 public class TaskViewModel extends AndroidViewModel {
-    private final TaskRepository repository;
-    private final MutableLiveData<List<Task>> _tasks = new MutableLiveData<>();
-    public LiveData<List<Task>> tasks = _tasks;
+    private final TaskRepository taskRepository;
+//    private final MutableLiveData<List<Task>> _tasks = new MutableLiveData<>();
+    private final LiveData<List<Task>> tasks;
 
     public TaskViewModel(@NonNull Application application) {
         super(application);
-        repository = new TaskRepository(application);
-        loadTasks();
+        taskRepository = new TaskRepository(application);
+        tasks = taskRepository.getAllTasks();
     }
 
     public LiveData<List<Task>> getTasks() {
         return tasks;
     }
 
-    public void loadTasks() {
-        new Thread(() -> _tasks.postValue(repository.getAllTasks())).start();
-    }
+//    public void loadTasks() {
+//        new Thread(() -> _tasks.postValue(taskRepository.getAllTasks())).start();
+//    }
 
     public void insert(Task task) {
         new Thread(() -> {
-            repository.insert(task);
-            loadTasks();
+            taskRepository.insert(task);
+//            loadTasks();
         }).start();
     }
 
     public void delete(Task task) {
         new Thread(() -> {
-            repository.delete(task);
-            loadTasks();
+            taskRepository.delete(task);
+//            loadTasks();
         }).start();
     }
 
     public void update(Task task) {
         new Thread(() -> {
-            repository.update(task);
-            loadTasks();
+            taskRepository.update(task);
+//            loadTasks();
+        }).start();
+    }
+
+    public void deleteAll(Runnable onFinished) {
+        new Thread(() -> {
+            taskRepository.deleteAll();
+            onFinished.run();
+        }).start();
+    }
+
+    public void changeStatus(Task task) {
+        new Thread(() -> {
+            taskRepository.changeStatus(task.getId(), !task.isDone());
         }).start();
     }
 }

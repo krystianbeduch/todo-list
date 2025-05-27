@@ -1,5 +1,6 @@
 package com.example.todolist.data.dao;
 
+import androidx.lifecycle.LiveData;
 import androidx.room.Dao;
 import androidx.room.Delete;
 import androidx.room.Insert;
@@ -13,7 +14,7 @@ import java.util.List;
 @Dao
 public interface TaskDao {
     @Query("SELECT * FROM Task")
-    List<Task> getAll();
+    LiveData<List<Task>> getAll();
 
     @Insert
     void insert(Task task);
@@ -23,4 +24,10 @@ public interface TaskDao {
 
     @Update
     void update(Task task);
+
+    @Query("DELETE FROM Task")
+    void deleteAll();
+
+    @Query("UPDATE Task SET is_done = :isDone WHERE id = :taskId")
+    void changeStatus(int taskId, boolean isDone);
 }

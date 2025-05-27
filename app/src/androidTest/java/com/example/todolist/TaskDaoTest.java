@@ -17,6 +17,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @RunWith(AndroidJUnit4.class)
@@ -41,7 +42,7 @@ public class TaskDaoTest {
 
     @Test
     public void insertAndGetTask() {
-        Task task = new Task("Test task", "2025-05-27", false);
+        Task task = new Task("Test task", LocalDateTime.now().plusDays(3), false, 1, LocalDateTime.now());
         taskDao.insert(task);
 
         List<Task> allTasks = taskDao.getAll();

@@ -1,34 +1,55 @@
 package com.example.todolist.presentation.home.adapter;
 
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.PopupMenu;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.todolist.R;
+import com.example.todolist.domain.model.Priority;
 import com.example.todolist.domain.model.Task;
+import com.example.todolist.presentation.services.Converters;
 
 import java.util.List;
 
 public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder> {
+
+    private final OnTaskClickListener listener;
+
     private List<Task> tasks;
 
+    public interface OnTaskClickListener {
+        void onEditClick(Task task);
+        void onDeleteClick(Task task);
+        void onChangeStatusClick(Task task);
+        void onLongClick(Task task);
+    }
+
     public static class TaskViewHolder extends RecyclerView.ViewHolder {
-        TextView titleView;
-        TextView deadlineView;
+        private final TextView titleView;
+        private final TextView deadlineView;
+        private final TextView createdAtView;
+        private final TextView priorityView;
+        private final TextView doneView;
 
         public TaskViewHolder(View itemView) {
             super(itemView);
             titleView = itemView.findViewById(R.id.taskTitle);
             deadlineView = itemView.findViewById(R.id.taskDeadline);
+            createdAtView = itemView.findViewById(R.id.taskCreated);
+            priorityView = itemView.findViewById(R.id.taskPriority);
+            doneView = itemView.findViewById(R.id.taskDone);
         }
     }
 
-    public TaskAdapter(List<Task> tasks) {
+    public TaskAdapter(List<Task> tasks, OnTaskClickListener listener) {
         this.tasks = tasks;
+        this.listener = listener;
     }
 
     public void setTasks(List<Task> tasks) {
@@ -49,7 +70,58 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
     public void onBindViewHolder(@NonNull TaskAdapter.TaskViewHolder holder, int position) {
         Task task = tasks.get(position);
         holder.titleView.setText(task.getTitle());
-        holder.deadlineView.setText("Deadline: " + task.getDeadLine());
+        holder.deadlineView.setText("Termin: " + Converters.formatReadable(task.getDeadline()));
+        holder.createdAtView.setText("Utworzono: " +  Converters.formatReadable(task.getCreatedAt()));
+        holder.priorityView.setText("Ważność: " + task.getPriority());
+//        holder.priorityView.setText("Priority: " + task.getPriority().name());
+        if (task.getPriority() == Priority.HIGH) {
+//        if (task.getPriority() == 1) {
+            holder.priorityView.setTextColor(Color.RED);
+        }
+        if (task.getPriority() == Priority.MEDIUM) {
+            holder.priorityView.setTextColor(Color.rgb(255, 165, 0));
+        }
+        else {
+            holder.priorityView.setTextColor(Color.YELLOW);
+        }
+
+        if (task.isDone()) {
+//            holder.itemView.setBackgroundColor(Color.parseColor("#DFF0D8"));
+            holder.doneView.setVisibility(View.VISIBLE);
+        }
+        else {
+            holder.doneView.setVisibility(View.GONE);
+        }
+
+        holder.itemView.setOnClickListener(v -> {
+            PopupMenu popupMenu = new PopupMenu(v.getContext(), v);
+            popupMenu.inflate(R.menu.task_context_menu);
+            popupMenu.setOnMenuItemClickListener(item -> {
+                if (item.getItemId() == R.id.edit_task) {
+                    listener.onEditClick(task);
+                    return true;
+                }
+                else if (item.getItemId() == R.id.delete_task) {
+                    listener.onDeleteClick(task);
+                    return true;
+                }
+                else if (item.getItemId() == R.id.change_status) {
+                    listener.onChangeStatusClick(task);
+                    return true;
+                }
+                else {
+                    return false;
+                }
+            });
+            popupMenu.show();
+        });
+
+        holder.itemView.setOnLongClickListener(v -> {
+            listener.onLongClick(task);
+            return true;
+        });
+
+
     }
 
     @Override

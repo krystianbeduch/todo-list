@@ -20,4 +20,41 @@
         android:text="@string/taskDeadline"
         android:textSize="14sp"
         android:textColor="#666" />
+
+    <TextView
+        android:id="@+id/taskCreated"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="14sp"
+        android:textColor="#666" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="6dp">
+
+        <TextView
+            android:id="@+id/taskPriority"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:textColor="@android:color/holo_red_dark"
+            android:textSize="14sp" />
+
+        <TextView
+            android:id="@+id/taskDone"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/task_done_text"
+            android:textSize="20sp"
+            android:textColor="@android:color/holo_green_dark"
+            android:visibility="gone" />
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="12dp"
+        android:background="#BDBDBD" />
 </LinearLayout>
