@@ -1,5 +1,6 @@
 package com.example.todolist.presentation.home;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -9,18 +10,27 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.NavController;
+import androidx.navigation.NavOptions;
+import androidx.navigation.Navigation;
+import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.todolist.EditTaskActivity;
+import com.example.todolist.MainActivity;
 import com.example.todolist.R;
 import com.example.todolist.domain.model.Priority;
+//import com.example.todolist.domain.model.SharedTaskViewModel;
 import com.example.todolist.domain.model.Task;
 import com.example.todolist.domain.model.TaskViewModel;
+import com.example.todolist.presentation.dashboard.TaskFormFragment;
 import com.example.todolist.presentation.home.adapter.TaskAdapter;
 
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.Collections;
 
 public class HomeFragment extends Fragment {
 
@@ -29,6 +39,7 @@ public class HomeFragment extends Fragment {
     private RecyclerView recyclerView;
     private TaskAdapter taskAdapter;
     private TaskViewModel taskViewModel;
+//    private SharedTaskViewModel sharedViewModel;
     private boolean inserted = false;
 
 //    public View onCreateView(@NonNull LayoutInflater inflater,
@@ -57,6 +68,50 @@ public class HomeFragment extends Fragment {
             @Override
             public void onEditClick(Task task) {
                 Log.i("Task", "Edit: " + task.getId() + "." + task.getTitle());
+//                Bundle bundle = new Bundle();
+//                bundle.putInt("task_id", task.getId());
+//                bundle.putString("task_title", task.getTitle());
+//                bundle.putString("task_deadline", task.getDeadline().toString()); // LocalDateTime -> ISO String
+//                bundle.putBoolean("task_isDone", task.isDone());
+//                bundle.putString("task_priority", task.getPriority().name());
+//                bundle.putString("task_createdAt", task.getCreatedAt().toString());
+
+                Intent intent = new Intent(getContext(), EditTaskActivity.class);
+                intent.putExtra("taskId", task.getId());
+                startActivity(intent);;
+
+//                TaskFormFragment taskFormFragment = new TaskFormFragment();
+//                taskFormFragment.setArguments(bundle);
+//                requireActivity().getSupportFragmentManager()
+//                        .beginTransaction()
+//                        .replace(R.id.nav_host_fragment_activity_main, taskFormFragment)
+//                        .addToBackStack(null)
+//                        .commit();
+//
+
+//                NavController navController = Navigation.findNavController(requireView());
+//                navController.navigate(R.id.fragment_task_form, bundle);
+//                NavController navController = NavHostFragment.findNavController(HomeFragment.this);
+//                navController.navigate(R.id.navigation_task_manager, bundle,
+//                        new NavOptions.Builder()
+//                                .setPopUpTo(R.id.navigation_home, false)
+//                                .build()
+//                );
+//
+//                TaskFormFragment fragment = new TaskFormFragment();
+//                fragment.setArguments(bundle);
+
+
+//                sharedViewModel = new ViewModelProvider(requireActivity()).get(SharedTaskViewModel.class);
+//                sharedViewModel.selectTask(task);
+//                ((MainActivity) requireActivity()).switchToMenuItem(R.id.navigation_task_manager);
+
+                // Przełącz na zakładkę "TaskForm"
+//                BottomNavigationView nav = requireActivity().findViewById(R.id.nav_view);
+//                nav.setSelectedItemId(R.id.navigation_task_manager);
+
+//                requireActivity().setTitle("Edytuj zadanie");
+
             }
 
             @Override
@@ -78,24 +133,16 @@ public class HomeFragment extends Fragment {
         });
         recyclerView.setAdapter(taskAdapter);
 
-//        homeViewModel = new ViewModelProvider(this).get(HomeViewModel.class);
-//        homeViewModel.getTaskList().observe(getViewLifecycleOwner(), tasks -> {
-//            taskAdapter.setTasks(tasks);
-//        });
-
-        taskViewModel = new ViewModelProvider(this).get(TaskViewModel.class);
-
-        taskViewModel.deleteAll(this::insertDummyTasks);
-
+        taskViewModel = new ViewModelProvider(requireActivity()).get(TaskViewModel.class);
+//        taskViewModel.deleteAll(this::insertDummyTasks);
         taskViewModel.getTasks().observe(getViewLifecycleOwner(), tasks -> {
             taskAdapter.setTasks(tasks);
 
-//            if (!inserted && tasks.isEmpty()) {
-//                insertDummyTasks();
-//                inserted = true;
-//            }
+            if (!inserted && tasks.isEmpty()) {
+                insertDummyTasks();
+                inserted = true;
+            }
         });
-
         return root;
     }
 

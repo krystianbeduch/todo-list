@@ -1,19 +1,21 @@
 <resources>
     <string name="app_name">To-Do List</string>
     <string name="title_home">Home</string>
-    <string name="title_add_task">Dodaj zadanie</string>
+    <string name="title_task_manager">Manager zadań</string>
     <string name="title_notifications">Notifications</string>
 
-    <string name="headerTextView">To-Do List</string>
+    <!--    <string name="headerTextView">To-Do List</string>-->
     <string name="taskTitle">Task title</string>
     <string name="taskDeadline">Deadline</string>
     <string name="change_status">Zmień status</string>
+    <string name="task_done_text">✔</string>
     <string name="delete_task">Usuń</string>
     <string name="edit_task">Edytuj</string>
-    <string name="task_title_hint">Tytuł zadania</string>
-    <string name="save_task_button_text">Zapisz zadanie</string>
-    <string name="task_deadline_hint">Termin</string>
+
     <string name="task_form_header_text">Dodaj nowe zadanie</string>
+    <string name="task_title_hint">Tytuł zadania</string>
+    <string name="task_deadline_hint">Termin</string>
     <string name="task_priority_label_text">Wybierz priorytet:</string>
-    <string name="task_done_text">✔</string>
+
+    <string name="save_task_button_text">Zapisz zadanie</string>
 </resources>

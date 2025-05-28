@@ -13,8 +13,11 @@ import java.util.List;
 
 @Dao
 public interface TaskDao {
-    @Query("SELECT * FROM Task")
+    @Query("SELECT * FROM Task ORDER BY created_at DESC")
     LiveData<List<Task>> getAll();
+
+    @Query("SELECT * FROM Task WHERE id = :id")
+    LiveData<Task> getById(int id);
 
     @Insert
     void insert(Task task);

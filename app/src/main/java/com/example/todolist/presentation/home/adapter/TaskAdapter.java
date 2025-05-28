@@ -70,15 +70,14 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
     public void onBindViewHolder(@NonNull TaskAdapter.TaskViewHolder holder, int position) {
         Task task = tasks.get(position);
         holder.titleView.setText(task.getTitle());
-        holder.deadlineView.setText("Termin: " + Converters.formatReadable(task.getDeadline()));
-        holder.createdAtView.setText("Utworzono: " +  Converters.formatReadable(task.getCreatedAt()));
-        holder.priorityView.setText("Ważność: " + task.getPriority());
-//        holder.priorityView.setText("Priority: " + task.getPriority().name());
+        holder.deadlineView.setText("Termin: " + Converters.formatLocalDateTimeToReadableInRecyclerView(task.getDeadline()));
+        holder.createdAtView.setText("Utworzono: " +  Converters.formatLocalDateTimeToReadableInRecyclerView(task.getCreatedAt()));
+
+        holder.priorityView.setText("Priorytet: " + task.getPriority().getDisplayName());
         if (task.getPriority() == Priority.HIGH) {
-//        if (task.getPriority() == 1) {
             holder.priorityView.setTextColor(Color.RED);
         }
-        if (task.getPriority() == Priority.MEDIUM) {
+        else if (task.getPriority() == Priority.MEDIUM) {
             holder.priorityView.setTextColor(Color.rgb(255, 165, 0));
         }
         else {
@@ -86,7 +85,6 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
         }
 
         if (task.isDone()) {
-//            holder.itemView.setBackgroundColor(Color.parseColor("#DFF0D8"));
             holder.doneView.setVisibility(View.VISIBLE);
         }
         else {

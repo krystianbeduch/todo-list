@@ -12,10 +12,32 @@
         tools:layout="@layout/fragment_home" />
 
     <fragment
-        android:id="@+id/navigation_add_task"
+        android:id="@+id/navigation_task_manager"
         android:name="com.example.todolist.presentation.dashboard.TaskFormFragment"
-        android:label="@string/title_add_task"
-        tools:layout="@layout/fragment_task_form" />
+        android:label="@string/title_task_manager"
+        tools:layout="@layout/fragment_task_form" >
+
+        <argument
+            android:name="task_id"
+            app:argType="integer"
+            android:defaultValue="-1" />
+        <argument
+            android:name="task_title"
+            app:argType="string" />
+        <argument
+            android:name="task_deadline"
+            app:argType="string" />
+        <argument
+            android:name="task_isDone"
+            app:argType="boolean" />
+        <argument
+            android:name="task_priority"
+            app:argType="string" />
+        <argument
+            android:name="task_createdAt"
+            app:argType="string" />
+
+    </fragment>
 
     <fragment
         android:id="@+id/navigation_notifications"

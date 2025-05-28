@@ -7,9 +7,9 @@
         android:title="@string/title_home" />
 
     <item
-        android:id="@+id/navigation_add_task"
+        android:id="@+id/navigation_task_manager"
         android:icon="@drawable/create_task_icon"
-        android:title="@string/title_add_task" />
+        android:title="Dodaj zadanie" />
 
     <item
         android:id="@+id/navigation_notifications"

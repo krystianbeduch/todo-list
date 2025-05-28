@@ -26,6 +26,10 @@ public class TaskViewModel extends AndroidViewModel {
         return tasks;
     }
 
+    public LiveData<Task> getTaskById(int id) {
+        return taskRepository.getById(id);
+    }
+
 //    public void loadTasks() {
 //        new Thread(() -> _tasks.postValue(taskRepository.getAllTasks())).start();
 //    }

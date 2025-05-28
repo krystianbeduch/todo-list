@@ -6,9 +6,13 @@ import com.example.todolist.domain.model.Priority;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 
 public class Converters {
     private static final DateTimeFormatter formatter = DateTimeFormatter.ISO_LOCAL_DATE_TIME;
+    private static final DateTimeFormatter taskRecyclerViewFormatter = DateTimeFormatter.ofPattern("EEEE, dd.MM.yyyy HH:mm");
+    private static final DateTimeFormatter formFormatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
+
 
     @TypeConverter
     public static LocalDateTime fromStringToLocalDateTime(String value) {
@@ -16,7 +20,7 @@ public class Converters {
     }
 
     @TypeConverter
-    public static String localDateTImeToString(LocalDateTime dateTime) {
+    public static String fromLocalDateTimeToString(LocalDateTime dateTime) {
         return dateTime == null ? null : dateTime.format(formatter);
     }
 
@@ -26,17 +30,25 @@ public class Converters {
     }
 
     @TypeConverter
-    public static Priority fromIntToInt(Integer value) {
+    public static Priority fromIntToPriority(Integer value) {
         return value == null ? null : Priority.fromInt(value);
     }
 
-    public static String formatReadable(LocalDateTime dateTime) {
-        if (dateTime == null) {
-            return "";
-        }
-        DateTimeFormatter formatter1 = DateTimeFormatter.ofPattern("EEEE, dd.MM.yyyy HH:mm");
-        return dateTime.format(formatter1);
+    public static String formatLocalDateTimeToReadableInRecyclerView(LocalDateTime dateTime) {
+        return dateTime == null ? null : dateTime.format(taskRecyclerViewFormatter);
     }
+
+    public static LocalDateTime fromTaskFormDeadlineToLocalDateTime(String dateTimeText) throws DateTimeParseException {
+        if (dateTimeText == null || dateTimeText.isEmpty()) {
+            throw new DateTimeParseException("Pusty tekst daty", dateTimeText, 0);
+        }
+        return LocalDateTime.parse(dateTimeText, formFormatter);
+    }
+    public static String fromLocalDateTimeToStringInEditActivity(LocalDateTime dateTime) {
+        return dateTime == null ? null : dateTime.format(formFormatter);
+    }
+
+
 
 
 

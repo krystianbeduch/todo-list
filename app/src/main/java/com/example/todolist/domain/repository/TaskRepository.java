@@ -24,6 +24,10 @@ public class TaskRepository {
         return allTasks;
     }
 
+    public LiveData<Task> getById(int id) {
+        return taskDao.getById(id);
+    }
+
     public void insert(Task task) {
         taskDao.insert(task);
     }
