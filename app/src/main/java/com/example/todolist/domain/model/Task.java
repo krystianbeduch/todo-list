@@ -17,7 +17,6 @@ public class Task {
     @ColumnInfo(name = "dead_line")
     private LocalDateTime deadline;
     @ColumnInfo(name = "is_done")
-    @NonNull
     private boolean isDone;
 
     @ColumnInfo(name = "priority")

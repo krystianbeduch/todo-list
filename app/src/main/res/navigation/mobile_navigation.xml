@@ -13,8 +13,8 @@
 
     <fragment
         android:id="@+id/navigation_task_manager"
-        android:name="com.example.todolist.presentation.dashboard.TaskFormFragment"
-        android:label="@string/title_task_manager"
+        android:name="com.example.todolist.presentation.addtask.AddTaskFragment"
+        android:label="@string/title_add_task"
         tools:layout="@layout/fragment_task_form" >
 
         <argument

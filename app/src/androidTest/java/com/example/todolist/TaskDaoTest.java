@@ -1,6 +1,8 @@
 package com.example.todolist;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import android.content.Context;
 
@@ -10,6 +12,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4;
 
 import com.example.todolist.data.dao.TaskDao;
 import com.example.todolist.data.db.AppDatabase;
+import com.example.todolist.domain.model.Priority;
 import com.example.todolist.domain.model.Task;
 
 import org.junit.After;
@@ -41,12 +44,57 @@ public class TaskDaoTest {
     }
 
     @Test
-    public void insertAndGetTask() {
-        Task task = new Task("Test task", LocalDateTime.now().plusDays(3), false, 1, LocalDateTime.now());
+    public void insertAndGetTaskTest()  {
+        Task task = new Task("Test task", LocalDateTime.now().plusDays(3), false, Priority.LOW, LocalDateTime.now());
         taskDao.insert(task);
 
-        List<Task> allTasks = taskDao.getAll();
+        List<Task> allTasks = taskDao.getAllSync();
         assertEquals(1, allTasks.size());
-        assertEquals("Test task", allTasks.get(0).getTitle());
+        assertEquals("Test task", allTasks.getFirst().getTitle());
+    }
+
+    @Test
+    public void deleteTaskTest() {
+        Task task = new Task("Test task", LocalDateTime.now().plusDays(3), false, Priority.LOW, LocalDateTime.now());
+        taskDao.insert(task);
+        List<Task> allTasksBefore = taskDao.getAllSync();
+        assertEquals(1, allTasksBefore.size());
+
+        taskDao.delete(allTasksBefore.getFirst());
+        List<Task> allTasksAfter = taskDao.getAllSync();
+        assertTrue(allTasksAfter.isEmpty());
+    }
+
+    @Test
+    public void updateTaskTest() {
+        Task task = new Task("Original task", LocalDateTime.now().plusDays(3), false, Priority.LOW, LocalDateTime.now());
+        taskDao.insert(task);
+        List<Task> allTasks = taskDao.getAllSync();
+        assertEquals(1, allTasks.size());
+
+        Task insertedtask = allTasks.getFirst();
+        insertedtask.setTitle("Updated task");
+        insertedtask.setPriority(Priority.HIGH);
+        taskDao.update(insertedtask);
+
+        List<Task> updatedTasks = taskDao.getAllSync();
+        assertEquals(1, updatedTasks.size());
+        Task updatedTask = updatedTasks.getFirst();
+        assertEquals("Updated task", updatedTask.getTitle());
+        assertEquals(Priority.HIGH, updatedTask.getPriority());
+    }
+
+    @Test
+    public void changeStatusTest() {
+        Task task = new Task("Test task", LocalDateTime.now().plusDays(3), false, Priority.LOW, LocalDateTime.now());
+        taskDao.insert(task);
+        List<Task> allTasks = taskDao.getAllSync();
+        assertEquals(1, allTasks.size());
+        Task insertedTask = allTasks.getFirst();
+        assertFalse(insertedTask.isDone());
+
+        taskDao.changeStatus(insertedTask.getId(), !insertedTask.isDone());
+        List<Task> changedTasks = taskDao.getAllSync();
+        assertTrue(changedTasks.getFirst().isDone());
     }
 }

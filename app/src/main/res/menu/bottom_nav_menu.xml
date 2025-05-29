@@ -9,7 +9,7 @@
     <item
         android:id="@+id/navigation_task_manager"
         android:icon="@drawable/create_task_icon"
-        android:title="Dodaj zadanie" />
+        android:title="@string/title_add_task" />
 
     <item
         android:id="@+id/navigation_notifications"

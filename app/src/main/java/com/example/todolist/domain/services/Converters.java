@@ -1,4 +1,4 @@
-package com.example.todolist.presentation.services;
+package com.example.todolist.domain.services;
 
 import androidx.room.TypeConverter;
 

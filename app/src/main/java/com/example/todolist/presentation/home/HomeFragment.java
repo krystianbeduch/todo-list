@@ -4,33 +4,33 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.Spinner;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.navigation.NavController;
-import androidx.navigation.NavOptions;
-import androidx.navigation.Navigation;
-import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.todolist.EditTaskActivity;
-import com.example.todolist.MainActivity;
 import com.example.todolist.R;
 import com.example.todolist.domain.model.Priority;
 //import com.example.todolist.domain.model.SharedTaskViewModel;
+import com.example.todolist.domain.model.SortType;
 import com.example.todolist.domain.model.Task;
 import com.example.todolist.domain.model.TaskViewModel;
-import com.example.todolist.presentation.dashboard.TaskFormFragment;
 import com.example.todolist.presentation.home.adapter.TaskAdapter;
 
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
-import java.util.Collections;
 
 public class HomeFragment extends Fragment {
 
@@ -55,14 +55,36 @@ public class HomeFragment extends Fragment {
 //        return root;
 //    }
 
+//    @Override
+//    public void onCreateOptionsMenu
+
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
 
         View root = inflater.inflate(R.layout.fragment_home, container, false);
         recyclerView = root.findViewById(R.id.tasksRecyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+
+//        Spinner sortSpinner = root.findViewById(R.id.sortSpinner);
+//        sortSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+//            @Override
+//            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+//                SortType selected = SortType.CREATED_DATE;
+//                switch (position) {
+//                    case 1: selected = SortType.TITLE; break;
+//                    case 2: selected = SortType.DEADLINE; break;
+//                    case 3: selected = SortType.PRIORITY; break;
+//                    case 4: selected = SortType.STATUS; break;
+//                }
+//                taskViewModel.setSortType(selected);
+//            }
+//            @Override
+//            public void onNothingSelected(AdapterView<?> parent) {}
+//        });
 
         taskAdapter = new TaskAdapter(new ArrayList<>(), new TaskAdapter.OnTaskClickListener() {
             @Override
@@ -135,7 +157,7 @@ public class HomeFragment extends Fragment {
 
         taskViewModel = new ViewModelProvider(requireActivity()).get(TaskViewModel.class);
 //        taskViewModel.deleteAll(this::insertDummyTasks);
-        taskViewModel.getTasks().observe(getViewLifecycleOwner(), tasks -> {
+        taskViewModel.getSortedTasks().observe(getViewLifecycleOwner(), tasks -> {
             taskAdapter.setTasks(tasks);
 
             if (!inserted && tasks.isEmpty()) {
@@ -143,6 +165,15 @@ public class HomeFragment extends Fragment {
                 inserted = true;
             }
         });
+
+//        taskViewModel.getSortedTasks().observe(getViewLifecycleOwner(), tasks -> {
+//            taskAdapter.setTasks(tasks);
+//        });
+
+
+//        taskViewModel.getSortedTasks().observe(getViewLifecycleOwner(), tasks -> {
+//
+//        });
         return root;
     }
 
@@ -165,5 +196,40 @@ public class HomeFragment extends Fragment {
     public void onDestroyView() {
         super.onDestroyView();
 //        binding = null;
+    }
+
+    @Override
+    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
+        inflater.inflate(R.menu.sort_menu, menu);
+        MenuItem item = menu.findItem(R.id.sort_spinner_item);
+        Spinner spinner = (Spinner) item.getActionView();
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(
+                requireContext(),
+                R.array.sort_options,
+                android.R.layout.simple_spinner_item
+        );
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner.setAdapter(adapter);
+
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+//                SortType selected = SortType.CREATED_DATE;
+//                switch (position) {
+//                    case 1: selected = SortType.TITLE; break;
+//                    case 2: selected = SortType.DEADLINE; break;
+//                    case 3: selected = SortType.PRIORITY; break;
+//                    case 4: selected = SortType.STATUS; break;
+//                }
+                SortType selected = SortType.values()[position];
+                taskViewModel.loadTasksBySort(selected);
+                taskViewModel.getSortedTasks().observe(getViewLifecycleOwner(), tasks -> {
+                    taskAdapter.setTasks(tasks);
+                });
+//                taskViewModel.setSortType(selected);
+            }
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {}
+        });
     }
 }

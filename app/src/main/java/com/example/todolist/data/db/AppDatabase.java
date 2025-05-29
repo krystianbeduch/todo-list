@@ -9,7 +9,7 @@ import androidx.room.TypeConverters;
 
 import com.example.todolist.data.dao.TaskDao;
 import com.example.todolist.domain.model.Task;
-import com.example.todolist.presentation.services.Converters;
+import com.example.todolist.domain.services.Converters;
 
 @Database(entities = {Task.class}, version = 3)
 @TypeConverters({Converters.class})

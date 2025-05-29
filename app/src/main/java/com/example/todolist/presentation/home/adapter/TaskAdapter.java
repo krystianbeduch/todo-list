@@ -13,7 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.todolist.R;
 import com.example.todolist.domain.model.Priority;
 import com.example.todolist.domain.model.Task;
-import com.example.todolist.presentation.services.Converters;
+import com.example.todolist.domain.services.Converters;
 
 import java.util.List;
 

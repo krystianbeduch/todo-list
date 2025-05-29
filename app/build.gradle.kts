@@ -42,10 +42,10 @@ android {
 
 dependencies {
     implementation(libs.activity)
-    val room_version = "2.7.1"
-    implementation("androidx.room:room-runtime:$room_version")
-    annotationProcessor("androidx.room:room-compiler:$room_version")
-    testImplementation("androidx.room:room-testing:$room_version")
+    val roomVersion = "2.7.1"
+    implementation("androidx.room:room-runtime:$roomVersion")
+    annotationProcessor("androidx.room:room-compiler:$roomVersion")
+    testImplementation("androidx.room:room-testing:$roomVersion")
     testImplementation("androidx.arch.core:core-testing:2.2.0")
     testImplementation("junit:junit:4.13.2")
 

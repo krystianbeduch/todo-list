@@ -14,7 +14,22 @@ import java.util.List;
 @Dao
 public interface TaskDao {
     @Query("SELECT * FROM Task ORDER BY created_at DESC")
-    LiveData<List<Task>> getAll();
+    LiveData<List<Task>> getTasksOrderDescByCreatedDate();
+
+    @Query("SELECT * FROM Task ORDER BY title")
+    LiveData<List<Task>> getTasksOrderByTitle();
+
+    @Query("SELECT * FROM Task ORDER BY dead_line")
+    LiveData<List<Task>> getTasksOrderByDeadline();
+
+    @Query("SELECT * FROM Task ORDER BY priority")
+    LiveData<List<Task>> getTasksOrderByPriority();
+
+    @Query("SELECT * FROM Task ORDER BY is_done")
+    LiveData<List<Task>> getTasksOrderByStatus();
+
+    @Query("SELECT * FROM Task")
+    List<Task>getAllSync();
 
     @Query("SELECT * FROM Task WHERE id = :id")
     LiveData<Task> getById(int id);
