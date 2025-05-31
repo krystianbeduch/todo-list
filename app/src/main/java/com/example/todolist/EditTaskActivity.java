@@ -53,7 +53,7 @@ public class EditTaskActivity extends AppCompatActivity {
             if (task != null) {
                 taskToEdit = task;
                 titleEditText.setText(task.getTitle());
-                deadlineEditText.setText(Converters.fromLocalDateTimeToStringInEditActivity(task.getDeadline()));
+                deadlineEditText.setText(Converters.fromLocalDateTimeToString(task.getDeadline()));
                 prioritySpinner.setSelection(getPriorityIndex(task.getPriority().getDisplayName()));
             }
 

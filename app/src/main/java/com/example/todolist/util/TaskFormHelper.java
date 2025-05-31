@@ -132,7 +132,7 @@ public class TaskFormHelper {
 
         LocalDateTime deadline;
         try {
-            deadline = Converters.fromTaskFormDeadlineToLocalDateTime(deadlineText);
+            deadline = Converters.fromStringToLocalDateTime(deadlineText);
         }
         catch (DateTimeParseException e) {
             Toast.makeText(context, "Nieprawdiłowy format daty. Użyj: dd.MM.yyyy HH:mm", Toast.LENGTH_SHORT).show();

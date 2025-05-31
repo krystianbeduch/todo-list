@@ -18,6 +18,10 @@
     <string name="task_priority_label_text">Wybierz priorytet:</string>
 
     <string name="save_task_button_text">Zapisz zadanie</string>
+    <string name="add_attachment">Dodaj załącznik</string>
+    <string name="delete_attachment">Usuń załącznik</string>
+    <string name="show_attachment">Zobacz załącznik</string>
+    <string name="attachment_icon">Ikonka załącznika</string>
 
     <string-array name="sort_options">
         <item>Data dodania</item>

@@ -50,6 +50,15 @@
             android:textSize="20sp"
             android:textColor="@android:color/holo_green_dark"
             android:visibility="gone" />
+        
+        <ImageView
+            android:id="@+id/attachmentIcon"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_marginStart="8dp"
+            android:src="@drawable/ic_attach_file"
+            android:contentDescription="@string/attachment_icon"
+            android:visibility="gone" />
     </LinearLayout>
 
     <View

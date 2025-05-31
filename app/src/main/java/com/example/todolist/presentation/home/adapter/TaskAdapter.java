@@ -4,6 +4,7 @@ import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.PopupMenu;
 import android.widget.TextView;
 
@@ -28,6 +29,9 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
         void onDeleteClick(Task task);
         void onChangeStatusClick(Task task);
         void onLongClick(Task task);
+        void onAddAttachmentClick(Task task);
+        void onDeleteAttachmentClick(Task task);
+        void onShowAttachmentClick(Task task);
     }
 
     public static class TaskViewHolder extends RecyclerView.ViewHolder {
@@ -36,6 +40,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
         private final TextView createdAtView;
         private final TextView priorityView;
         private final TextView doneView;
+        private final ImageView attachmentIcon;
 
         public TaskViewHolder(View itemView) {
             super(itemView);
@@ -44,6 +49,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
             createdAtView = itemView.findViewById(R.id.taskCreated);
             priorityView = itemView.findViewById(R.id.taskPriority);
             doneView = itemView.findViewById(R.id.taskDone);
+            attachmentIcon = itemView.findViewById(R.id.attachmentIcon);
         }
     }
 
@@ -91,6 +97,13 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
             holder.doneView.setVisibility(View.GONE);
         }
 
+//        if (!task.getAttachments().isEmpty()) {
+//            holder.attachmentIcon.setVisibility(View.VISIBLE);
+//        }
+//        else {
+//            holder.attachmentIcon.setVisibility(View.GONE);
+//        }
+
         holder.itemView.setOnClickListener(v -> {
             PopupMenu popupMenu = new PopupMenu(v.getContext(), v);
             popupMenu.inflate(R.menu.task_context_menu);
@@ -105,6 +118,10 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
                 }
                 else if (item.getItemId() == R.id.change_status) {
                     listener.onChangeStatusClick(task);
+                    return true;
+                }
+                else if (item.getItemId() == R.id.add_attachment) {
+                    listener.onAddAttachmentClick(task);
                     return true;
                 }
                 else {

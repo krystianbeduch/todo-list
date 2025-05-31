@@ -30,7 +30,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="16dp"
-        android:drawableEnd="@drawable/calendar_icon"
+        android:drawableEnd="@drawable/ic_calendar"
         android:hint="@string/task_deadline_hint"
         android:focusable="false"
         android:clickable="true"

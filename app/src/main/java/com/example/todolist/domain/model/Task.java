@@ -3,9 +3,11 @@ package com.example.todolist.domain.model;
 import androidx.annotation.NonNull;
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
+import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 public class Task {
@@ -14,7 +16,6 @@ public class Task {
 
     @NonNull
     private String title;
-    @ColumnInfo(name = "dead_line")
     private LocalDateTime deadline;
     @ColumnInfo(name = "is_done")
     private boolean isDone;
@@ -26,13 +27,14 @@ public class Task {
     @NonNull
     private LocalDateTime createdAt;
 
-//    public Task(int id, String title, String deadLine, boolean isDone) {
-//        this.id = id;
-//        this.title = title;
-//        this.deadLine = deadLine;
-//        this.isDone = isDone;
-//    }
+    @Ignore
+    private List<Attachment> attachments;
 
+    public Task() {
+        title = "";
+        priority = null;
+        createdAt = null;
+    }
 
     public Task(@NonNull String title, LocalDateTime deadline, boolean isDone, @NonNull Priority priority, @NonNull LocalDateTime createdAt) {
         this.title = title;
@@ -91,5 +93,13 @@ public class Task {
 
     public void setCreatedAt(@NonNull LocalDateTime createdAt) {
         this.createdAt = createdAt;
+    }
+
+    public List<Attachment> getAttachments() {
+        return attachments;
+    }
+
+    public void setAttachments(List<Attachment> attachments) {
+        this.attachments = attachments;
     }
 }

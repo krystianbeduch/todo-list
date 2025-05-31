@@ -34,4 +34,13 @@ public enum Priority {
         }
         throw new IllegalArgumentException("Unknown priority: " + value);
     }
+
+    public static Priority fromDisplayName(String displayName) {
+        for (Priority p : values()) {
+            if (p.getDisplayName().equals(displayName)) {
+                return p;
+            }
+        }
+        throw new IllegalArgumentException("Unknown display name: " + displayName);
+    }
 }

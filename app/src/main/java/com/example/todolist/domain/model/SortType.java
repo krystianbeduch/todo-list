@@ -5,8 +5,5 @@ public enum SortType {
     TITLE,
     DEADLINE,
     PRIORITY,
-    STATUS;
-
-    public void setValue(SortType sortType) {
-    }
+    STATUS
 }

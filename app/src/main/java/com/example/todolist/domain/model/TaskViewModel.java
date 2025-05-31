@@ -1,86 +1,89 @@
 package com.example.todolist.domain.model;
+import com.example.todolist.domain.repository.AttachmentRepository;
+import com.example.todolist.domain.repository.TaskRepository;
 
 import android.app.Application;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MediatorLiveData;
-import androidx.lifecycle.MutableLiveData;
-
-import com.example.todolist.domain.repository.TaskRepository;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
 public class TaskViewModel extends AndroidViewModel {
     private final TaskRepository taskRepository;
-//    private final MutableLiveData<List<Task>> _tasks = new MutableLiveData<>();
+    private final AttachmentRepository attachmentRepository;
+    private final MediatorLiveData<List<Task>> tasks;
+    private LiveData<List<Task>> currentSource;
+    private SortType currentSortType;
 //    private final LiveData<List<Task>> tasks;
-    private final MutableLiveData<SortType> sortType;
-    private final MediatorLiveData<List<Task>> sortedTasks;
 
-    public void loadTasksBySort(SortType sortType) {
-        LiveData<List<Task>> newSource = taskRepository.getSortedTasks(sortType);
-        sortedTasks.addSource(newSource, sortedTasks::setValue);
-    }
 
     public TaskViewModel(@NonNull Application application) {
         super(application);
         taskRepository = new TaskRepository(application);
-        sortType = new MutableLiveData<>(SortType.CREATED_DATE);
-        sortedTasks = new MediatorLiveData<>();
-//        tasks = taskRepository.getAllTasks();
+        attachmentRepository = new AttachmentRepository(application);
+        tasks = new MediatorLiveData<>();
+        currentSortType = SortType.CREATED_DATE;
 
+//        tasks = taskRepository.getSortedTasks(SortType.CREATED_DATE);
         loadTasksBySort(SortType.CREATED_DATE);
-
-
-        // Obserwowanie zrodel
-//        sortedTasks.addSource(tasks, taskList -> sortAndPost(taskList, sortType.getValue()));
-//        sortedTasks.addSource(sortType, sort -> {
-//            Log.i("t", tasks.getValue().toString());
-//            sortAndPost(tasks.getValue(), sort);
-//                });
     }
 
-//    public LiveData<List<Task>> getTasks() {
-//        return tasks;
-//    }
+    public void loadTasksBySort(SortType sortType) {
+        currentSortType = sortType;
+        LiveData<List<Task>> newSource = taskRepository.getSortedTasks(sortType);
+        if (currentSource != null) {
+            tasks.removeSource(currentSource);
+        }
+        currentSource = newSource;
+//        tasks.addSource(newSource, tasks::setValue);
 
-    public LiveData<List<Task>> getSortedTasks() {
-        return sortedTasks;
+        tasks.addSource(newSource, list -> {
+            if (list != null) {
+                List<Task> sortedList = new ArrayList<>(list);
+                sortTasks(sortedList, currentSortType);
+            }
+            else {
+                tasks.setValue(null);
+            }
+        });
+    }
+
+    public LiveData<List<Task>> getTasks() {
+        return tasks;
     }
 
     public LiveData<Task> getTaskById(int id) {
         return taskRepository.getById(id);
     }
 
-//    public void loadTasks() {
-//        new Thread(() -> _tasks.postValue(taskRepository.getAllTasks())).start();
-//    }
-
     public void insert(Task task) {
         new Thread(() -> {
             taskRepository.insert(task);
-//            loadTasks();
+//            new Handler(Looper.getMainLooper()).post(() -> {
+//                loadTasksBySort(currentSortType);
+//            });
         }).start();
     }
 
     public void delete(Task task) {
         new Thread(() -> {
             taskRepository.delete(task);
-//            loadTasks();
         }).start();
     }
 
     public void update(Task task) {
         new Thread(() -> {
             taskRepository.update(task);
-//            loadTasks();
         }).start();
+//        loadTasksBySort(currentSortType);
     }
 
     public void deleteAll(Runnable onFinished) {
@@ -93,46 +96,58 @@ public class TaskViewModel extends AndroidViewModel {
     public void changeStatus(Task task) {
         new Thread(() -> {
             taskRepository.changeStatus(task.getId(), !task.isDone());
+            new Handler(Looper.getMainLooper()).post(() -> {
+                List<Task> currentTasks = tasks.getValue();
+//                if (currentTasks != null) {
+//                    List<Task> newTasks = new ArrayList<>(currentTasks);
+//                    for (Task t : newTasks) {
+//                        if (t.getId() == task.getId()) {
+//                            t.setDone(!t.isDone());
+//                            break;
+//                        }
+//                    }
+//                    Log.i("curet", currentSortType.name());
+                    sortTasks(currentTasks, currentSortType);
+//                    tasks.setValue(currentTasks);
+//                }
+
+//                loadTasksBySort(currentSortType);
+            });
         }).start();
+//        loadTasksBySort(currentSortType);
+        Log.i("df", currentSortType.toString());
     }
 
-    public void setSortType(SortType sortType) {
-        Log.i("TVM", "Zmiana sortwania na: " + sortType);
-        sortType.setValue(sortType);
-    }
 
-    private void sortAndPost(List<Task> taskList, SortType type) {
-        Log.i("s", "siema");
-        if (taskList == null) {
-            sortedTasks.postValue(Collections.emptyList());
-            return;
-        }
-        List<Task> sorted = new ArrayList<>(taskList);
-        switch (type) {
+    public void sortTasks(List<Task> tasks, SortType sortType) {
+        Comparator<Task> comparator;
+        switch (sortType) {
             case TITLE:
-                sorted.sort(Comparator.comparing(Task::getTitle, String.CASE_INSENSITIVE_ORDER));
+                comparator = Comparator.comparing(Task::getTitle, String.CASE_INSENSITIVE_ORDER);
                 break;
             case DEADLINE:
-                sorted.sort(Comparator.comparing(Task::getDeadline, Comparator.nullsLast(Comparator.naturalOrder())));
+                comparator = Comparator.comparing(Task::getDeadline);
                 break;
             case PRIORITY:
-                sorted.sort(Comparator.comparing(Task::getPriority).reversed());
+                comparator = Comparator.comparing(Task::getPriority);
                 break;
             case STATUS:
-                sorted.sort(Comparator.comparing(Task::isDone));
+                comparator = Comparator.comparing(Task::isDone);
                 break;
             case CREATED_DATE:
             default:
-                sorted.sort(Comparator.comparing(Task::getCreatedAt, Comparator.nullsLast(Comparator.naturalOrder())));
-                break;
+                comparator = Comparator.comparing(Task::getCreatedAt).reversed();
         }
-        Log.i("TaskViewModel", "Lista po sortowaniu: " + sorted);
-        sortedTasks.postValue(sorted);
+        tasks.sort(comparator);
+        currentSortType = sortType;
+        this.tasks.setValue(tasks);
     }
 
-
-//    private List<Task> sortTasks
-
+    public void addAttachmentToTask(Attachment attachment) {
+        new Thread(() -> {
+            attachmentRepository.insertAttachment(attachment);
+        }).start();
+    }
 
 }
 

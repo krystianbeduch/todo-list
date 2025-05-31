@@ -1,6 +1,8 @@
 package com.example.todolist.presentation.home;
 
+import android.app.Activity;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -13,6 +15,8 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
@@ -21,16 +25,20 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.todolist.EditTaskActivity;
 import com.example.todolist.R;
+import com.example.todolist.domain.model.Attachment;
 import com.example.todolist.domain.model.Priority;
 //import com.example.todolist.domain.model.SharedTaskViewModel;
 import com.example.todolist.domain.model.SortType;
 import com.example.todolist.domain.model.Task;
 import com.example.todolist.domain.model.TaskViewModel;
+import com.example.todolist.domain.services.FileService;
 import com.example.todolist.presentation.home.adapter.TaskAdapter;
 
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 public class HomeFragment extends Fragment {
 
@@ -41,6 +49,9 @@ public class HomeFragment extends Fragment {
     private TaskViewModel taskViewModel;
 //    private SharedTaskViewModel sharedViewModel;
     private boolean inserted = false;
+    private static final int PICK_ATTACHMENT_REQUEST_CODE = 1001;
+    private Task currentAttachmentTask = null;
+    private ActivityResultLauncher<Intent> attachmentPickerLauncher;
 
 //    public View onCreateView(@NonNull LayoutInflater inflater,
 //                             ViewGroup container, Bundle savedInstanceState) {
@@ -68,6 +79,28 @@ public class HomeFragment extends Fragment {
         View root = inflater.inflate(R.layout.fragment_home, container, false);
         recyclerView = root.findViewById(R.id.tasksRecyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+
+        attachmentPickerLauncher = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                result -> {
+                    if (result.getResultCode() == Activity.RESULT_OK && result.getData() != null) {
+                        Uri sourceUri = result.getData().getData();
+                        assert sourceUri != null;
+                        String filename = FileService.getFileNameFromUri(getContext(), sourceUri);
+                        Uri localUri = FileService.copyFileToInternalStorage(requireContext(), sourceUri, filename);
+
+                        if (localUri != null && currentAttachmentTask != null) {
+                            Log.d("Attachment", "Selected file: " + localUri);
+                            Attachment attachment = new Attachment(
+                                    currentAttachmentTask.getId(),
+                                    filename,
+                                    localUri.toString()
+                            );
+                            taskViewModel.addAttachmentToTask(attachment);
+                        }
+                    }
+                }
+        );
 
 //        Spinner sortSpinner = root.findViewById(R.id.sortSpinner);
 //        sortSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -138,26 +171,51 @@ public class HomeFragment extends Fragment {
 
             @Override
             public void onDeleteClick(Task task) {
-                Log.i("Task", "Delete: " + task.getId() + ". " + task.getTitle());
+                Log.i("Delete task", task.getId() + ". " + task.getTitle());
                 taskViewModel.delete(task);
             }
 
             @Override
             public void onChangeStatusClick(Task task) {
-                Log.i("Task", "Change status: " + task.getId() + "." + task.getTitle());
+                Log.i("Change task status", task.getId() + "." + task.getTitle());
                 taskViewModel.changeStatus(task);
             }
 
             @Override
             public void onLongClick(Task task) {
+                Log.i("Change task status", task.getId() + "." + task.getTitle());
                 taskViewModel.changeStatus(task);
             }
+
+            @Override
+            public void onAddAttachmentClick(Task task) {
+                Log.i("Add attachment", task.getId() + "." + task.getTitle());
+                currentAttachmentTask = task;
+
+                Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+                intent.setType("*/*");
+                intent.addCategory(Intent.CATEGORY_OPENABLE);
+                intent.putExtra(Intent.EXTRA_MIME_TYPES, new String[]{"image/*", "video/*", "application/pdf"});
+                attachmentPickerLauncher.launch(intent);
+            }
+
+            @Override
+            public void onDeleteAttachmentClick(Task task) {
+
+            }
+
+            @Override
+            public void onShowAttachmentClick(Task task) {
+
+            }
+
+
         });
         recyclerView.setAdapter(taskAdapter);
 
         taskViewModel = new ViewModelProvider(requireActivity()).get(TaskViewModel.class);
 //        taskViewModel.deleteAll(this::insertDummyTasks);
-        taskViewModel.getSortedTasks().observe(getViewLifecycleOwner(), tasks -> {
+        taskViewModel.getTasks().observe(getViewLifecycleOwner(), tasks -> {
             taskAdapter.setTasks(tasks);
 
             if (!inserted && tasks.isEmpty()) {
@@ -222,14 +280,36 @@ public class HomeFragment extends Fragment {
 //                    case 4: selected = SortType.STATUS; break;
 //                }
                 SortType selected = SortType.values()[position];
-                taskViewModel.loadTasksBySort(selected);
-                taskViewModel.getSortedTasks().observe(getViewLifecycleOwner(), tasks -> {
-                    taskAdapter.setTasks(tasks);
-                });
+                List<Task> currentTasks = taskViewModel.getTasks().getValue();
+//                Log.i("ct", currentTasks.get(0).getTitle());
+                if (currentTasks != null) {
+                    taskViewModel.sortTasks(new ArrayList<>(currentTasks), selected);
+                }
+
+//                taskViewModel.loadTasksBySort(selected);
+//                taskViewModel.getTasks().observe(getViewLifecycleOwner(), tasks -> {
+//                    taskAdapter.setTasks(tasks);
+//                });
 //                taskViewModel.setSortType(selected);
             }
             @Override
             public void onNothingSelected(AdapterView<?> parent) {}
         });
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == PICK_ATTACHMENT_REQUEST_CODE && resultCode == Activity.RESULT_OK && data != null) {
+            if (currentAttachmentTask != null) {
+                Uri attachmentUri = data.getData();
+                assert attachmentUri != null;
+                requireContext().getContentResolver().takePersistableUriPermission(
+                        attachmentUri,
+                        Intent.FLAG_GRANT_READ_URI_PERMISSION
+                );
+                Log.d("Attachment", "Attachment added: " + attachmentUri);
+            }
+        }
     }
 }
