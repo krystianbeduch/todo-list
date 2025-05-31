@@ -13,6 +13,8 @@ import java.util.List;
 
 @Dao
 public interface AttachmentDao {
+    @Query("SELECT * FROM Attachment")
+    List<Attachment> getAllAttachments();
     @Query("SELECT * FROM Attachment WHERE task_id = :taskId")
     List<Attachment> getAttachmentsForTask(int taskId);
     @Insert(onConflict = OnConflictStrategy.REPLACE)

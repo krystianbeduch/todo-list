@@ -14,6 +14,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
@@ -97,6 +98,7 @@ public class HomeFragment extends Fragment {
                                     localUri.toString()
                             );
                             taskViewModel.addAttachmentToTask(attachment);
+                            Toast.makeText(getContext(), "Dodano załącznik", Toast.LENGTH_SHORT).show();
                         }
                     }
                 }

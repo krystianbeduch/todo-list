@@ -1,11 +1,13 @@
 package com.example.todolist.domain.model;
 import com.example.todolist.domain.repository.AttachmentRepository;
 import com.example.todolist.domain.repository.TaskRepository;
+import com.example.todolist.domain.services.TaskWithAtt;
 
 import android.app.Application;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
@@ -19,6 +21,7 @@ import java.util.List;
 public class TaskViewModel extends AndroidViewModel {
     private final TaskRepository taskRepository;
     private final AttachmentRepository attachmentRepository;
+//    private final TaskWithAtt taskWithAtt;
     private final MediatorLiveData<List<Task>> tasks;
     private LiveData<List<Task>> currentSource;
     private SortType currentSortType;
@@ -29,11 +32,14 @@ public class TaskViewModel extends AndroidViewModel {
         super(application);
         taskRepository = new TaskRepository(application);
         attachmentRepository = new AttachmentRepository(application);
+//        taskWithAtt = new TaskWithAtt(application);
+
         tasks = new MediatorLiveData<>();
         currentSortType = SortType.CREATED_DATE;
 
 //        tasks = taskRepository.getSortedTasks(SortType.CREATED_DATE);
         loadTasksBySort(SortType.CREATED_DATE);
+//        loadTasksWithAttachments();
     }
 
     public void loadTasksBySort(SortType sortType) {
@@ -48,7 +54,16 @@ public class TaskViewModel extends AndroidViewModel {
         tasks.addSource(newSource, list -> {
             if (list != null) {
                 List<Task> sortedList = new ArrayList<>(list);
-                sortTasks(sortedList, currentSortType);
+//                sortTasks(sortedList, currentSortType);
+                new Thread(() -> {
+                    for (Task task : sortedList) {
+                        List<Attachment> attachments = attachmentRepository.getAttachmentsByTaskId(task.getId());
+                        task.setAttachments(attachments);
+                    }
+                    new Handler(Looper.getMainLooper()).post(() -> {
+                        sortTasks(sortedList, currentSortType);
+                    });
+                }).start();
             }
             else {
                 tasks.setValue(null);
@@ -146,8 +161,21 @@ public class TaskViewModel extends AndroidViewModel {
     public void addAttachmentToTask(Attachment attachment) {
         new Thread(() -> {
             attachmentRepository.insertAttachment(attachment);
+
+            new Handler(Looper.getMainLooper()).post(() -> {
+                loadTasksBySort(currentSortType);
+            });
         }).start();
     }
+
+//    public void loadTasksWithAttachments() {
+//        new Thread(() -> {
+//            List<Task> taskWithAttachments = taskWithAtt.getTasksWithAttachments();
+//            new Handler(Looper.getMainLooper()).post(() -> {
+//                this.tasks.setValue(taskWithAttachments);
+//            });
+//        }).start();
+//    }
 
 }
 

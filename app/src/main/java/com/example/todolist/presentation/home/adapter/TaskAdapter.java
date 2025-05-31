@@ -1,6 +1,7 @@
 package com.example.todolist.presentation.home.adapter;
 
 import android.graphics.Color;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,6 +16,7 @@ import com.example.todolist.R;
 import com.example.todolist.domain.model.Priority;
 import com.example.todolist.domain.model.Task;
 import com.example.todolist.domain.services.Converters;
+import com.example.todolist.domain.services.TaskWithAtt;
 
 import java.util.List;
 
@@ -97,12 +99,14 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
             holder.doneView.setVisibility(View.GONE);
         }
 
-//        if (!task.getAttachments().isEmpty()) {
-//            holder.attachmentIcon.setVisibility(View.VISIBLE);
-//        }
-//        else {
-//            holder.attachmentIcon.setVisibility(View.GONE);
-//        }
+        if (task.getAttachments() != null && !task.getAttachments().isEmpty()) {
+            holder.attachmentIcon.setVisibility(View.VISIBLE);
+//            Log.i("att", "załącznik jest");
+        }
+        else {
+            holder.attachmentIcon.setVisibility(View.GONE);
+//            Log.i("att", "załącznik nie ma");
+        }
 
         holder.itemView.setOnClickListener(v -> {
             PopupMenu popupMenu = new PopupMenu(v.getContext(), v);
