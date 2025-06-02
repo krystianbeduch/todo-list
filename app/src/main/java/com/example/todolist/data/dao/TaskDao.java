@@ -14,7 +14,6 @@ import java.util.List;
 @Dao
 public interface TaskDao {
     @Query("SELECT * FROM Task ORDER BY created_at DESC")
-//    LiveData<List<Task>> getTasksOrderDescByCreatedDate();
     LiveData<List<Task>> getTasksOrderDescByCreatedDate();
 
 //    @Query("SELECT * FROM Task ORDER BY LOWER(title)")
@@ -49,8 +48,4 @@ public interface TaskDao {
 
     @Query("UPDATE Task SET is_done = :isDone WHERE id = :taskId")
     void changeStatus(int taskId, boolean isDone);
-
-    @Query("SELECT * FROM Task WHERE deadline <= :deadlineLimit ORDER BY deadline ASC")
-    LiveData<List<Task>> getTasksWithDeadlineBefore(String deadlineLimit);
-
 }

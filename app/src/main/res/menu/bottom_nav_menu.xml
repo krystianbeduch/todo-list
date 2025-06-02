@@ -21,7 +21,4 @@
         android:id="@+id/nav_more"
         android:icon="@drawable/ic_more_vert"
         android:title="@string/nav_more_text" />
-
-
-
 </menu>

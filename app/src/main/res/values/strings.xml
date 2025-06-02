@@ -20,4 +20,6 @@
     <string name="show_attachment">Zobacz załącznik</string>
     <string name="attachment_icon">Ikonka załącznika</string>
     <string name="nav_more_text">Więcej</string>
+    <string name="menu_import_tasks">Importuj zadania</string>
+    <string name="menu_export_tasks">Eksportuj zadania</string>
 </resources>

@@ -6,7 +6,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -42,7 +41,7 @@ public abstract class BaseTaskAdapter<VH extends RecyclerView.ViewHolder> extend
 
         titleView.setText(task.getTitle());
 
-        String createdAtText = "Utworzono: " + Converters.formatLocalDateTimeToReadableInRecyclerView(task.getCreatedAt());
+        String createdAtText = "Utworzono: " + Converters.formatLocalDateTimeToStringWithDayName(task.getCreatedAt());
         createdAtView.setText(createdAtText);
 
         String priorityText = "Priorytet: " + task.getPriority().getDisplayName();

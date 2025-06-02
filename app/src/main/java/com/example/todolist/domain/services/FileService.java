@@ -4,6 +4,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Environment;
 import android.os.Handler;
@@ -32,7 +33,7 @@ import java.util.Objects;
 
 public class FileService {
     public static void exportTasksToCsv(Context context) {
-        new Thread(() -> {
+        AsyncTask.execute(() -> {
             try {
                 AppDatabase db = AppDatabase.getInstance(context.getApplicationContext());
                 List<Task> allTasks = db.taskDao().getAllSync();
@@ -49,7 +50,10 @@ public class FileService {
 
                     Uri uri = MediaStore.Downloads.EXTERNAL_CONTENT_URI;
                     fileUri = context.getContentResolver().insert(uri, values);
-                    assert fileUri != null;
+                    if (fileUri == null) {
+                        showToast(context, "Błąd: nie można utworzyć pliku");
+                        return;
+                    }
                     outputStream = context.getContentResolver().openOutputStream(fileUri);
                 }
                 else {
@@ -59,36 +63,39 @@ public class FileService {
                     outputStream = new FileOutputStream(file);
                 }
 
-                if (outputStream != null) {
-                    StringBuilder csvBuilder = new StringBuilder();
-                    csvBuilder.append("ID;Tytuł;Termin;Priorytet;Status;Data dodania\n");
-                    for (Task task : allTasks) {
-                        csvBuilder.append(task.getId()).append(";");
-                        csvBuilder.append(sanitize(task.getTitle())).append(";");
-                        csvBuilder.append(Converters.fromLocalDateTimeToString(task.getDeadline())).append(";");
-                        csvBuilder.append(task.getPriority().getDisplayName()).append(";");
-                        csvBuilder.append(task.isDone() ? 1 : 0).append(";");
-                        csvBuilder.append(Converters.fromLocalDateTimeToString(task.getCreatedAt())).append("\n");
-                    }
-
-                    outputStream.write(csvBuilder.toString().getBytes(StandardCharsets.UTF_8));
-                    outputStream.flush();
-                    outputStream.close();
-
-                    showToast(context, "Wyeksportowano do: " + fileUri);
-                    Log.i("Export tasks" , String.valueOf(fileUri));
+                if (outputStream == null) {
+                    showToast(context, "Błąd: nie można otworzyć strumienia");
+                    return;
                 }
+
+                StringBuilder csvBuilder = new StringBuilder();
+                csvBuilder.append("ID;Tytuł;Termin;Priorytet;Status;Data dodania\n");
+                for (Task task : allTasks) {
+                    csvBuilder.append(task.getId()).append(";");
+                    csvBuilder.append(sanitize(task.getTitle())).append(";");
+                    csvBuilder.append(Converters.fromLocalDateTimeToString(task.getDeadline())).append(";");
+                    csvBuilder.append(task.getPriority().getDisplayName()).append(";");
+                    csvBuilder.append(task.isDone() ? 1 : 0).append(";");
+                    csvBuilder.append(Converters.fromLocalDateTimeToString(task.getCreatedAt())).append("\n");
+                }
+
+                outputStream.write(csvBuilder.toString().getBytes(StandardCharsets.UTF_8));
+                outputStream.flush();
+                outputStream.close();
+
+                showToast(context, "Wyeksportowano do: " + fileUri);
+                Log.i("Export tasks" , String.valueOf(fileUri));
             }
             catch (Exception e) {
                 e.printStackTrace();
                 showToast(context, "Błąd eksportu: " + e.getMessage());
-                Log.e("Error export" , Objects.requireNonNull(e.getMessage()));
+                Log.e("Error export" , e.getMessage());
             }
-        }).start();
+        });
     }
 
     public static void importTasksFromCsv(Context context, Uri fileUri) {
-        new Thread(() -> {
+        AsyncTask.execute(() -> {
             try {
                 InputStream inputStream = context.getContentResolver().openInputStream(fileUri);
                 if (inputStream == null) {
@@ -129,16 +136,16 @@ public class FileService {
             catch (Exception e) {
                 e.printStackTrace();
                 showToast(context, "Błąd importu: " + e.getMessage());
-                Log.e("Error import" , Objects.requireNonNull(e.getMessage()));
+                Log.e("Error import" , e.getMessage());
             }
-        }).start();
+        });
     }
 
     public static Uri copyFileToInternalStorage(Context context, Uri sourceUri, String filename) {
         String filenameWithoutExtension;
         String extension;
         int dotIndex = filename.lastIndexOf(".");
-        if (dotIndex != 1) {
+        if (dotIndex != -1) {
             filenameWithoutExtension = filename.substring(0, dotIndex);
             extension = filename.substring(dotIndex);
         }
@@ -203,14 +210,6 @@ public class FileService {
             e.printStackTrace();
             return false;
         }
-
-//        File file = new File(context.getFilesDir(), filename);
-//        if (file.exists()) {
-//            return file.delete();
-//        }
-//        else {
-//            return false;
-//        }
     }
 
     private static String sanitize(String input) {

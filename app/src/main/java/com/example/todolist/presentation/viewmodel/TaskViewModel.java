@@ -4,8 +4,12 @@ import com.example.todolist.domain.model.SortType;
 import com.example.todolist.domain.model.Task;
 import com.example.todolist.domain.repository.AttachmentRepository;
 import com.example.todolist.domain.repository.TaskRepository;
+import com.example.todolist.domain.services.FileService;
 
 import android.app.Application;
+import android.content.Context;
+import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
@@ -38,14 +42,12 @@ public class TaskViewModel extends AndroidViewModel {
         tasks = new MediatorLiveData<>();
         currentSortType = SortType.CREATED_DATE;
 
-//        tasks = taskRepository.getSortedTasks(SortType.CREATED_DATE);
         loadTasksBySort(SortType.CREATED_DATE);
-//        loadTasksWithAttachments();
     }
 
     public void loadTasksBySort(SortType sortType) {
         currentSortType = sortType;
-        LiveData<List<Task>> newSource = taskRepository.getSortedTasks(sortType);
+        LiveData<List<Task>> newSource = taskRepository.getSortedTasks();
         if (currentSource != null) {
             tasks.removeSource(currentSource);
         }
@@ -53,24 +55,24 @@ public class TaskViewModel extends AndroidViewModel {
 //        tasks.addSource(newSource, tasks::setValue);
 
         tasks.addSource(newSource, list -> {
-            if (list != null) {
-                List<Task> sortedList = new ArrayList<>(list);
-//                sortTasks(sortedList, currentSortType);
-                new Thread(() -> {
-                    for (Task task : sortedList) {
-                        List<Attachment> attachments = attachmentRepository.getAttachmentsByTaskId(task.getId());
-                        task.setAttachments(attachments);
-                    }
-                    new Handler(Looper.getMainLooper()).post(() -> {
-                        sortTasks(sortedList, currentSortType);
-                    });
-                }).start();
-            }
-            else {
+            if (list == null) {
                 tasks.setValue(null);
+                return;
             }
+//            List<Task> sortedList = new ArrayList<>(list);
+//                sortTasks(sortedList, currentSortType);
+            AsyncTask.execute(() -> {
+                for (Task task : list) {
+                    List<Attachment> attachments = attachmentRepository.getAttachmentsByTaskId(task.getId());
+                    task.setAttachments(attachments);
+                }
+                new Handler(Looper.getMainLooper()).post(() -> {
+                    sortTasks(list, currentSortType);
+                });
+            });
         });
     }
+
 
     public LiveData<List<Task>> getTasks() {
         return tasks;
@@ -81,36 +83,26 @@ public class TaskViewModel extends AndroidViewModel {
     }
 
     public void insert(Task task) {
-        new Thread(() -> {
-            taskRepository.insert(task);
-//            new Handler(Looper.getMainLooper()).post(() -> {
-//                loadTasksBySort(currentSortType);
-//            });
-        }).start();
+        AsyncTask.execute(() -> taskRepository.insert(task));
     }
 
     public void delete(Task task) {
-        new Thread(() -> {
-            taskRepository.delete(task);
-        }).start();
+        AsyncTask.execute(() -> taskRepository.delete(task));
     }
 
     public void update(Task task) {
-        new Thread(() -> {
-            taskRepository.update(task);
-        }).start();
-//        loadTasksBySort(currentSortType);
+        AsyncTask.execute(() -> taskRepository.update(task));
     }
 
     public void deleteAll(Runnable onFinished) {
-        new Thread(() -> {
+        AsyncTask.execute(() -> {
             taskRepository.deleteAll();
             onFinished.run();
-        }).start();
+        });
     }
 
     public void changeStatus(Task task) {
-        new Thread(() -> {
+        AsyncTask.execute(() -> {
             taskRepository.changeStatus(task.getId(), !task.isDone());
             new Handler(Looper.getMainLooper()).post(() -> {
                 List<Task> currentTasks = tasks.getValue();
@@ -129,9 +121,7 @@ public class TaskViewModel extends AndroidViewModel {
 
 //                loadTasksBySort(currentSortType);
             });
-        }).start();
-//        loadTasksBySort(currentSortType);
-        Log.i("df", currentSortType.toString());
+        });
     }
 
 
@@ -160,23 +150,23 @@ public class TaskViewModel extends AndroidViewModel {
     }
 
     public void addAttachmentToTask(Attachment attachment) {
-        new Thread(() -> {
+        AsyncTask.execute(() -> {
             attachmentRepository.insertAttachment(attachment);
 
             new Handler(Looper.getMainLooper()).post(() -> {
                 loadTasksBySort(currentSortType);
             });
-        }).start();
+        });
     }
 
     public void deleteAttachment(Attachment attachment) {
-        new Thread(() -> {
+        AsyncTask.execute(() -> {
             attachmentRepository.deleteAttachment(attachment);
 
             new Handler(Looper.getMainLooper()).post(() -> {
                 loadTasksBySort(currentSortType);
             });
-        }).start();
+        });
     }
 
     public void updateTasksForNotification(List<Task> tasks) {
@@ -187,7 +177,7 @@ public class TaskViewModel extends AndroidViewModel {
         return tasksForNotification;
     }
 
-    public MutableLiveData<Boolean> getHasInsertedDummy() {
+    public LiveData<Boolean> getHasInsertedDummy() {
         return hasInsertedDummy;
     }
 
@@ -195,12 +185,20 @@ public class TaskViewModel extends AndroidViewModel {
         hasInsertedDummy.setValue(true);
     }
 
-    public MutableLiveData<Boolean> getNotificationChecked() {
+    public LiveData<Boolean> getNotificationChecked() {
         return notificationChecked;
     }
 
     public void markNotificationChecked() {
         notificationChecked.setValue(true);
+    }
+
+    public void importTasksFromFile(Context context, Uri uri) {
+        FileService.importTasksFromCsv(context, uri);
+    }
+
+    public void exportTasksToFile(Context context) {
+        FileService.exportTasksToCsv(context);
     }
 
     //    public void loadTasksWithAttachments() {

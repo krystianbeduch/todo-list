@@ -1,10 +1,6 @@
 package com.example.todolist;
 
 import android.os.Bundle;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.Spinner;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
@@ -19,10 +15,6 @@ import com.example.todolist.util.TaskFormHelper;
 public class EditTaskActivity extends AppCompatActivity {
 
     private FragmentTaskFormBinding binding;
-    private TextView headerTextView;
-    private EditText titleEditText, deadlineEditText;
-    private Spinner prioritySpinner;
-    private Button saveButton;
     private Task taskToEdit;
 
     @Override
@@ -32,8 +24,6 @@ public class EditTaskActivity extends AppCompatActivity {
         binding = FragmentTaskFormBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-
-
         int taskId = getIntent().getIntExtra("taskId", -1);
         if (taskId == -1) {
             Toast.makeText(this, "Błąd: brak ID zadania", Toast.LENGTH_SHORT).show();
@@ -41,22 +31,13 @@ public class EditTaskActivity extends AppCompatActivity {
             return;
         }
 
-//        headerTextView = findViewById(R.id.task_form_header);
-//        titleEditText = findViewById(R.id.task_title);
-//        deadlineEditText = findViewById(R.id.task_deadline);
-//        prioritySpinner = findViewById(R.id.task_priority);
-//        saveButton = findViewById(R.id.task_save_button);
-
-//        headerTextView.setText("Edytuj zadanie");
+        setTitle("Edytuj zadanie");
         String headerText = "Edytuj zadanie";
         binding.taskFormHeader.setText(headerText);
 
         TaskFormHelper helper = new TaskFormHelper(
                 this,
                 this,
-//                titleEditText,
-//                deadlineEditText,
-//                prioritySpinner
                 binding.taskTitle,
                 binding.taskDeadline,
                 binding.taskPriority
@@ -71,17 +52,19 @@ public class EditTaskActivity extends AppCompatActivity {
             }
 
             taskToEdit = task;
-//            titleEditText.setText(task.getTitle());
-//            deadlineEditText.setText(Converters.fromLocalDateTimeToString(task.getDeadline()));
-//            prioritySpinner.setSelection(getPriorityIndex(task.getPriority().getDisplayName()));
-//            saveButton.setOnClickListener(v -> helper.handleSave(updatedTask -> finish(), true, taskToEdit));
 
             binding.taskTitle.setText(task.getTitle());
             binding.taskDeadline.setText(Converters.fromLocalDateTimeToString(task.getDeadline()));
-//            binding.taskPriority.setSelection(getPriorityIndex(task.getPriority().getDisplayName()));
             binding.taskPriority.setSelection(Priority.getPriorityIndex(task.getPriority()));
 
             binding.taskSaveButton.setOnClickListener(v -> helper.handleSave(updatedTask -> finish(), true, taskToEdit));
         });
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        binding = null;
+        taskToEdit = null;
     }
 }

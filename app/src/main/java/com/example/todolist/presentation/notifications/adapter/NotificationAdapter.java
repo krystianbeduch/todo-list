@@ -35,7 +35,7 @@ public class NotificationAdapter extends BaseTaskAdapter<NotificationAdapter.Not
         Task task = tasks.get(position);
 
         String notificationTypeText = task.getNotificationType().getTextToNotification() +
-                Converters.formatLocalDateTimeToReadableInRecyclerView(task.getDeadline());
+                Converters.formatLocalDateTimeToStringWithDayName(task.getDeadline());
 
         holder.notificationTypeView.setText(notificationTypeText);
         bindCommonTaskData(

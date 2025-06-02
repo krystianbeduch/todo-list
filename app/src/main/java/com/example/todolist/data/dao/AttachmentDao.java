@@ -7,7 +7,6 @@ import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
 
 import com.example.todolist.domain.model.Attachment;
-import com.example.todolist.domain.model.Task;
 
 import java.util.List;
 

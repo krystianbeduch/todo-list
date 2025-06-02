@@ -14,7 +14,7 @@ import java.util.List;
 
 public class Converters {
     private static final DateTimeFormatter formatter = DateTimeFormatter.ISO_LOCAL_DATE_TIME;
-    private static final DateTimeFormatter taskRecyclerViewFormatter = DateTimeFormatter.ofPattern("EEEE, dd.MM.yyyy HH:mm");
+    private static final DateTimeFormatter formatterWithDayName = DateTimeFormatter.ofPattern("EEEE, dd.MM.yyyy HH:mm");
     private static final DateTimeFormatter formFormatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
 
 
@@ -48,8 +48,8 @@ public class Converters {
         return TextUtils.join("|", list);
     }
 
-    public static String formatLocalDateTimeToReadableInRecyclerView(LocalDateTime dateTime) {
-        return dateTime == null ? null : dateTime.format(taskRecyclerViewFormatter);
+    public static String formatLocalDateTimeToStringWithDayName(LocalDateTime dateTime) {
+        return dateTime == null ? null : dateTime.format(formatterWithDayName);
     }
 
     public static LocalDateTime fromStringToLocalDateTime(String dateTimeText) throws DateTimeParseException {
@@ -61,17 +61,4 @@ public class Converters {
     public static String fromLocalDateTimeToString(LocalDateTime dateTime) {
         return dateTime == null ? null : dateTime.format(formFormatter);
     }
-
-
-
-
-
-//    @TypeConverter
-//    public static Priority fromString(String value) {
-//        return Priority.valueOf(value);
-//    }
-//    @TypeConverter
-//    public static String priorityToString(Priority priority) {
-//        return priority.name();
-//    }
 }

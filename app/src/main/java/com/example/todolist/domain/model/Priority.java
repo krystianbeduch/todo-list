@@ -22,10 +22,6 @@ public enum Priority {
         return displayName;
     }
 
-    //    public String getDisplayName() {
-//        return displayName;
-//    }
-
     public static Priority fromInt(int value) {
         for (Priority p : values()) {
             if (p.getValue() == value) {

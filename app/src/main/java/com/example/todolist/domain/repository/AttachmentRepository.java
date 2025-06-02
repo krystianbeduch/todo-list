@@ -2,13 +2,9 @@ package com.example.todolist.domain.repository;
 
 import android.content.Context;
 
-import androidx.lifecycle.LiveData;
-
 import com.example.todolist.data.dao.AttachmentDao;
-import com.example.todolist.data.dao.TaskDao;
 import com.example.todolist.data.db.AppDatabase;
 import com.example.todolist.domain.model.Attachment;
-import com.example.todolist.domain.model.Task;
 
 import java.util.List;
 
@@ -31,5 +27,4 @@ public class AttachmentRepository {
     public void deleteAttachment(Attachment attachment) {
         attachmentDao.delete(attachment);
     }
-
 }

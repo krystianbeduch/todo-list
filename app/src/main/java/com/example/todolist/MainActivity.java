@@ -64,7 +64,7 @@ public class MainActivity extends AppCompatActivity {
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_activity_main);
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
         NavigationUI.setupWithNavController(binding.navView, navController);
-        
+
         taskViewModel = new ViewModelProvider(this).get(TaskViewModel.class);
         taskViewModel.getTasksForNotification().observe(this, tasks -> {
             BadgeDrawable badge = navView.getOrCreateBadge(R.id.navigation_notifications);
@@ -99,7 +99,7 @@ public class MainActivity extends AppCompatActivity {
                     if (result.getResultCode() == RESULT_OK && result.getData() != null) {
                         Uri fileUri = result.getData().getData();
                         if (fileUri != null) {
-                            FileService.importTasksFromCsv(this, fileUri);
+                            taskViewModel.importTasksFromFile(this, fileUri);
                         }
                     }
                 }
@@ -109,17 +109,14 @@ public class MainActivity extends AppCompatActivity {
 
     private void showMorePopup(View anchor) {
         PopupMenu popupMenu = new PopupMenu(this, anchor);
-        popupMenu.getMenu().add("Importuj zadania");
-        popupMenu.getMenu().add("Eksportuj zadania");
+        popupMenu.getMenuInflater().inflate(R.menu.bottom_nav_more, popupMenu.getMenu());
         popupMenu.setOnMenuItemClickListener(menuItem -> {
-            switch (Objects.requireNonNull(menuItem.getTitle()).toString()) {
-                case "Importuj zadania":
-//                    Toast.makeText(this, "Importowanie..", Toast.LENGTH_SHORT).show();
-                    openFilePicker();
-                    break;
-                case "Eksportuj zadania":
-                    FileService.exportTasksToCsv(this);
-                    break;
+            int id = menuItem.getItemId();
+            if (id == R.id.menu_import) {
+                openFilePicker();
+            }
+            else if (id == R.id.menu_export) {
+                taskViewModel.exportTasksToFile(this);
             }
             return true;
         });
@@ -145,4 +142,11 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        binding = null;
+    }
+
 }

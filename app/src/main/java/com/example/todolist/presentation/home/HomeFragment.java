@@ -296,12 +296,6 @@ public class HomeFragment extends Fragment {
                 LocalDateTime.now().minusDays(3), false, Priority.HIGH, LocalDateTime.now()));
     }
 
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        binding = null;
-    }
-
     private void openAttachment(Context context, Attachment attachment) {
         String filePath = attachment.getFilePath().replace("file://", "").replace("content://", "");
         File file = new File(context.getFilesDir(), filePath);
@@ -361,7 +355,12 @@ public class HomeFragment extends Fragment {
                 }
             }
         }
-
         taskViewModel.updateTasksForNotification(tasksToNotify);
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        binding = null;
     }
 }

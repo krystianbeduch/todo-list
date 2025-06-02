@@ -35,8 +35,8 @@ public class Task {
 
     public Task() {
         title = "";
-        priority = null;
-        createdAt = null;
+        priority = Priority.HIGH;
+        createdAt = LocalDateTime.now();
     }
 
     public Task(@NonNull String title, LocalDateTime deadline, boolean isDone, @NonNull Priority priority, @NonNull LocalDateTime createdAt) {
