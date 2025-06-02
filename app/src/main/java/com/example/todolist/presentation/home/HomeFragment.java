@@ -1,6 +1,9 @@
 package com.example.todolist.presentation.home;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.ActivityNotFoundException;
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -19,6 +22,7 @@ import android.widget.Toast;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
+import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -27,6 +31,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.todolist.EditTaskActivity;
 import com.example.todolist.R;
 import com.example.todolist.domain.model.Attachment;
+import com.example.todolist.domain.model.NotificationType;
 import com.example.todolist.domain.model.Priority;
 //import com.example.todolist.domain.model.SharedTaskViewModel;
 import com.example.todolist.domain.model.SortType;
@@ -34,7 +39,9 @@ import com.example.todolist.domain.model.Task;
 import com.example.todolist.domain.model.TaskViewModel;
 import com.example.todolist.domain.services.FileService;
 import com.example.todolist.presentation.home.adapter.TaskAdapter;
+import com.example.todolist.util.NotificationUtils;
 
+import java.io.File;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
@@ -77,6 +84,8 @@ public class HomeFragment extends Fragment {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
 
+        NotificationUtils.createNotificationChannel(requireContext());
+
         View root = inflater.inflate(R.layout.fragment_home, container, false);
         recyclerView = root.findViewById(R.id.tasksRecyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
@@ -91,7 +100,7 @@ public class HomeFragment extends Fragment {
                         Uri localUri = FileService.copyFileToInternalStorage(requireContext(), sourceUri, filename);
 
                         if (localUri != null && currentAttachmentTask != null) {
-                            Log.d("Attachment", "Selected file: " + localUri);
+                            Log.i("Attachment", "Selected file: " + localUri);
                             Attachment attachment = new Attachment(
                                     currentAttachmentTask.getId(),
                                     filename,
@@ -104,71 +113,13 @@ public class HomeFragment extends Fragment {
                 }
         );
 
-//        Spinner sortSpinner = root.findViewById(R.id.sortSpinner);
-//        sortSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-//            @Override
-//            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-//                SortType selected = SortType.CREATED_DATE;
-//                switch (position) {
-//                    case 1: selected = SortType.TITLE; break;
-//                    case 2: selected = SortType.DEADLINE; break;
-//                    case 3: selected = SortType.PRIORITY; break;
-//                    case 4: selected = SortType.STATUS; break;
-//                }
-//                taskViewModel.setSortType(selected);
-//            }
-//            @Override
-//            public void onNothingSelected(AdapterView<?> parent) {}
-//        });
-
         taskAdapter = new TaskAdapter(new ArrayList<>(), new TaskAdapter.OnTaskClickListener() {
             @Override
             public void onEditClick(Task task) {
                 Log.i("Task", "Edit: " + task.getId() + "." + task.getTitle());
-//                Bundle bundle = new Bundle();
-//                bundle.putInt("task_id", task.getId());
-//                bundle.putString("task_title", task.getTitle());
-//                bundle.putString("task_deadline", task.getDeadline().toString()); // LocalDateTime -> ISO String
-//                bundle.putBoolean("task_isDone", task.isDone());
-//                bundle.putString("task_priority", task.getPriority().name());
-//                bundle.putString("task_createdAt", task.getCreatedAt().toString());
-
                 Intent intent = new Intent(getContext(), EditTaskActivity.class);
                 intent.putExtra("taskId", task.getId());
-                startActivity(intent);;
-
-//                TaskFormFragment taskFormFragment = new TaskFormFragment();
-//                taskFormFragment.setArguments(bundle);
-//                requireActivity().getSupportFragmentManager()
-//                        .beginTransaction()
-//                        .replace(R.id.nav_host_fragment_activity_main, taskFormFragment)
-//                        .addToBackStack(null)
-//                        .commit();
-//
-
-//                NavController navController = Navigation.findNavController(requireView());
-//                navController.navigate(R.id.fragment_task_form, bundle);
-//                NavController navController = NavHostFragment.findNavController(HomeFragment.this);
-//                navController.navigate(R.id.navigation_task_manager, bundle,
-//                        new NavOptions.Builder()
-//                                .setPopUpTo(R.id.navigation_home, false)
-//                                .build()
-//                );
-//
-//                TaskFormFragment fragment = new TaskFormFragment();
-//                fragment.setArguments(bundle);
-
-
-//                sharedViewModel = new ViewModelProvider(requireActivity()).get(SharedTaskViewModel.class);
-//                sharedViewModel.selectTask(task);
-//                ((MainActivity) requireActivity()).switchToMenuItem(R.id.navigation_task_manager);
-
-                // Przełącz na zakładkę "TaskForm"
-//                BottomNavigationView nav = requireActivity().findViewById(R.id.nav_view);
-//                nav.setSelectedItemId(R.id.navigation_task_manager);
-
-//                requireActivity().setTitle("Edytuj zadanie");
-
+                startActivity(intent);
             }
 
             @Override
@@ -203,12 +154,44 @@ public class HomeFragment extends Fragment {
 
             @Override
             public void onDeleteAttachmentClick(Task task) {
+                if (task.getAttachments().isEmpty()) {
+                    Toast.makeText(getContext(), "Brak załączników", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                String[] attachmentsName = new String[task.getAttachments().size()];
+                for (int i = 0; i < task.getAttachments().size(); i++) {
+                    attachmentsName[i] = task.getAttachments().get(i).getFilename();
+                }
 
+                AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                builder.setTitle("Usuń załącznik");
+                builder.setItems(attachmentsName, (dialog, which) -> {
+                    Attachment selected = task.getAttachments().get(which);
+                    deleteAttachment(task, selected);
+                });
+                builder.setNegativeButton("Anuluj", (dialog, which) -> dialog.dismiss());
+                builder.show();
             }
 
             @Override
             public void onShowAttachmentClick(Task task) {
+                if (task.getAttachments().isEmpty()) {
+                    Toast.makeText(getContext(), "Brak załączników", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                String[] attachmentsName = new String[task.getAttachments().size()];
+                for (int i = 0; i < task.getAttachments().size(); i++) {
+                    attachmentsName[i] = task.getAttachments().get(i).getFilename();
+                }
 
+                AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                builder.setTitle("Wybierz załącznik");
+                builder.setItems(attachmentsName, (dialog, which) -> {
+                    Attachment selected = task.getAttachments().get(which);
+                    openAttachment(requireContext(), selected);
+                });
+                builder.setNegativeButton("Anuluj", (dialog, which) -> dialog.dismiss());
+                builder.show();
             }
 
 
@@ -224,16 +207,8 @@ public class HomeFragment extends Fragment {
                 insertDummyTasks();
                 inserted = true;
             }
+            checkForUpcomingDeadlines(tasks);
         });
-
-//        taskViewModel.getSortedTasks().observe(getViewLifecycleOwner(), tasks -> {
-//            taskAdapter.setTasks(tasks);
-//        });
-
-
-//        taskViewModel.getSortedTasks().observe(getViewLifecycleOwner(), tasks -> {
-//
-//        });
         return root;
     }
 
@@ -249,7 +224,9 @@ public class HomeFragment extends Fragment {
         taskViewModel.insert(new Task("Spotkanie z zespołem",
                 LocalDateTime.now().plusDays(2).with(LocalTime.of(18, 0)), true, Priority.LOW, LocalDateTime.now()));
         taskViewModel.insert(new Task("Zrobić zakupy",
-                LocalDateTime.now().with(LocalTime.of(12, 0)), false, Priority.HIGH, LocalDateTime.now()));
+                LocalDateTime.now().with(LocalTime.of(23, 59)), false, Priority.HIGH, LocalDateTime.now()));
+        taskViewModel.insert(new Task("Zadanie nieudane",
+                LocalDateTime.now().minusDays(3), false, Priority.HIGH, LocalDateTime.now()));
     }
 
     @Override
@@ -269,30 +246,17 @@ public class HomeFragment extends Fragment {
                 android.R.layout.simple_spinner_item
         );
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        assert spinner != null;
         spinner.setAdapter(adapter);
 
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-//                SortType selected = SortType.CREATED_DATE;
-//                switch (position) {
-//                    case 1: selected = SortType.TITLE; break;
-//                    case 2: selected = SortType.DEADLINE; break;
-//                    case 3: selected = SortType.PRIORITY; break;
-//                    case 4: selected = SortType.STATUS; break;
-//                }
                 SortType selected = SortType.values()[position];
                 List<Task> currentTasks = taskViewModel.getTasks().getValue();
-//                Log.i("ct", currentTasks.get(0).getTitle());
                 if (currentTasks != null) {
                     taskViewModel.sortTasks(new ArrayList<>(currentTasks), selected);
                 }
-
-//                taskViewModel.loadTasksBySort(selected);
-//                taskViewModel.getTasks().observe(getViewLifecycleOwner(), tasks -> {
-//                    taskAdapter.setTasks(tasks);
-//                });
-//                taskViewModel.setSortType(selected);
             }
             @Override
             public void onNothingSelected(AdapterView<?> parent) {}
@@ -314,4 +278,66 @@ public class HomeFragment extends Fragment {
             }
         }
     }
+
+    private void openAttachment(Context context, Attachment attachment) {
+        String filePath = attachment.getFilePath().replace("file://", "").replace("content://", "");
+        File file = new File(context.getFilesDir(), filePath);
+        Uri uri = FileProvider.getUriForFile(
+                requireContext(),
+                context.getPackageName() + ".fileprovider",
+                file
+        );
+
+        Intent intent = new Intent(Intent.ACTION_VIEW);
+        intent.setDataAndType(uri, context.getContentResolver().getType(uri));
+        intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+//        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+
+        try {
+            context.startActivity(intent);
+        }
+        catch (ActivityNotFoundException e) {
+            Toast.makeText(context, "Brak aplikacji do otwarcia pliku", Toast.LENGTH_SHORT).show();
+        }
+        catch (Exception e) {
+            Log.e("Open Attachment", Objects.requireNonNull(e.getMessage()));
+        }
+    }
+
+    private void deleteAttachment(Task task, Attachment attachment) {
+        if (FileService.deleteFileFromInternalStorage(requireContext(), attachment.getFilePath())) {
+            taskViewModel.deleteAttachment(attachment);
+            task.getAttachments().removeIf(a -> a.getId() == attachment.getId());
+            Log.i("Attachment deleted", attachment.getFilename() + " " + attachment.getFilePath());
+            Toast.makeText(getContext(), "Usunięto załącznik", Toast.LENGTH_SHORT).show();
+        }
+        else {
+            Toast.makeText(getContext(), "Błąd usuwania załącznika", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void checkForUpcomingDeadlines(List<Task> tasks) {
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime threshold = now.plusHours(24);
+        List<Task> tasksToNotify = new ArrayList<>();
+
+        for (Task task : tasks) {
+            if (!task.isDone()) {
+                if (task.getDeadline().isBefore(now)) {
+                    NotificationUtils.showTaskNotification(requireContext(), task);
+                    tasksToNotify.add(task);
+                    task.setNotificationType(NotificationType.OVERDUE);
+                }
+                else if (task.getDeadline().isAfter(now) && task.getDeadline().isBefore(threshold)) {
+                    NotificationUtils.showTaskNotification(requireContext(), task);
+                    tasksToNotify.add(task);
+                    task.setNotificationType(NotificationType.UPCOMING);
+                }
+            }
+        }
+
+        taskViewModel.updateTasksForNotification(tasksToNotify);
+    }
+
+
 }

@@ -65,4 +65,8 @@ public class TaskRepository {
     public void changeStatus(int taskId, boolean isDone) {
         taskDao.changeStatus(taskId, isDone);
     }
+
+    public LiveData<List<Task>> getTasksWithUpcomingDeadline(String deadlineLimit) {
+        return taskDao.getTasksWithDeadlineBefore(deadlineLimit);
+    }
 }

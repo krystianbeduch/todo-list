@@ -30,6 +30,9 @@ public class Task {
     @Ignore
     private List<Attachment> attachments;
 
+    @Ignore
+    private NotificationType notificationType;
+
     public Task() {
         title = "";
         priority = null;
@@ -42,6 +45,7 @@ public class Task {
         this.isDone = isDone;
         this.priority = priority;
         this.createdAt = createdAt;
+        this.notificationType = NotificationType.NONE;
     }
 
     public int getId() {
@@ -101,5 +105,13 @@ public class Task {
 
     public void setAttachments(List<Attachment> attachments) {
         this.attachments = attachments;
+    }
+
+    public NotificationType getNotificationType() {
+        return notificationType;
+    }
+
+    public void setNotificationType(NotificationType notificationType) {
+        this.notificationType = notificationType;
     }
 }

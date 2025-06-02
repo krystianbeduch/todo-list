@@ -17,6 +17,7 @@ import com.example.todolist.domain.model.Priority;
 import com.example.todolist.domain.model.Task;
 import com.example.todolist.domain.services.Converters;
 import com.example.todolist.domain.services.TaskWithAtt;
+import com.example.todolist.util.TaskViewBinder;
 
 import java.util.List;
 
@@ -77,36 +78,49 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
     @Override
     public void onBindViewHolder(@NonNull TaskAdapter.TaskViewHolder holder, int position) {
         Task task = tasks.get(position);
-        holder.titleView.setText(task.getTitle());
-        holder.deadlineView.setText("Termin: " + Converters.formatLocalDateTimeToReadableInRecyclerView(task.getDeadline()));
-        holder.createdAtView.setText("Utworzono: " +  Converters.formatLocalDateTimeToReadableInRecyclerView(task.getCreatedAt()));
+        String deadlineText = "Termin: " + Converters.formatLocalDateTimeToReadableInRecyclerView(task.getDeadline());
 
-        holder.priorityView.setText("Priorytet: " + task.getPriority().getDisplayName());
-        if (task.getPriority() == Priority.HIGH) {
-            holder.priorityView.setTextColor(Color.RED);
-        }
-        else if (task.getPriority() == Priority.MEDIUM) {
-            holder.priorityView.setTextColor(Color.rgb(255, 165, 0));
-        }
-        else {
-            holder.priorityView.setTextColor(Color.YELLOW);
-        }
+        holder.deadlineView.setText(deadlineText);
+        TaskViewBinder.bindCommonTaskData(
+                task,
+                holder.titleView,
+                holder.createdAtView,
+                holder.priorityView,
+                holder.doneView,
+                holder.attachmentIcon
+        );
 
-        if (task.isDone()) {
-            holder.doneView.setVisibility(View.VISIBLE);
-        }
-        else {
-            holder.doneView.setVisibility(View.GONE);
-        }
+//        String createdAtText = "Utworzono: " +  Converters.formatLocalDateTimeToReadableInRecyclerView(task.getCreatedAt());
+//        String priorityText = "Priorytet: " + task.getPriority().getDisplayName();
+//
+//        holder.titleView.setText(task.getTitle()); //
 
-        if (task.getAttachments() != null && !task.getAttachments().isEmpty()) {
-            holder.attachmentIcon.setVisibility(View.VISIBLE);
-//            Log.i("att", "załącznik jest");
-        }
-        else {
-            holder.attachmentIcon.setVisibility(View.GONE);
-//            Log.i("att", "załącznik nie ma");
-        }
+//        holder.createdAtView.setText(createdAtText); //
+//
+//        holder.priorityView.setText(priorityText); //
+//        switch (task.getPriority()) { //
+//            case HIGH:
+//                holder.priorityView.setTextColor(Color.RED);
+//                break;
+//            case MEDIUM:
+//                holder.priorityView.setTextColor(Color.rgb(255, 165, 0));
+//                break;
+//            case LOW:
+//                holder.priorityView.setTextColor(Color.YELLOW);
+//                break;
+//        }
+//
+//        holder.doneView.setVisibility(task.isDone() ? View.VISIBLE : View.GONE); //
+//
+//        if (task.getAttachments() != null && !task.getAttachments().isEmpty()) { //
+//            holder.attachmentIcon.setVisibility(View.VISIBLE);
+////            Log.i("att", "załącznik jest");
+//        }
+//        else {
+//            holder.attachmentIcon.setVisibility(View.GONE);
+////            Log.i("att", "załącznik nie ma");
+//        }
+//        //
 
         holder.itemView.setOnClickListener(v -> {
             PopupMenu popupMenu = new PopupMenu(v.getContext(), v);
@@ -126,6 +140,14 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
                 }
                 else if (item.getItemId() == R.id.add_attachment) {
                     listener.onAddAttachmentClick(task);
+                    return true;
+                }
+                else if (item.getItemId() == R.id.show_attachment) {
+                    listener.onShowAttachmentClick(task);
+                    return true;
+                }
+                else if (item.getItemId() == R.id.delete_attachment) {
+                    listener.onDeleteAttachmentClick(task);
                     return true;
                 }
                 else {

@@ -13,6 +13,8 @@ import android.provider.OpenableColumns;
 import android.util.Log;
 import android.widget.Toast;
 
+import androidx.core.content.FileProvider;
+
 import com.example.todolist.data.db.AppDatabase;
 import com.example.todolist.domain.model.Priority;
 import com.example.todolist.domain.model.Task;
@@ -133,21 +135,33 @@ public class FileService {
     }
 
     public static Uri copyFileToInternalStorage(Context context, Uri sourceUri, String filename) {
-        try {
-            InputStream inputStream = context.getContentResolver().openInputStream(sourceUri);
-            File targetFile = new File(context.getFilesDir(), filename);
-            OutputStream outputStream = new FileOutputStream(targetFile);
+        String filenameWithoutExtension;
+        String extension;
+        int dotIndex = filename.lastIndexOf(".");
+        if (dotIndex != 1) {
+            filenameWithoutExtension = filename.substring(0, dotIndex);
+            extension = filename.substring(dotIndex);
+        }
+        else {
+            filenameWithoutExtension = filename;
+            extension = "";
+        }
+        String filenameWithTimestamp = filenameWithoutExtension + "_" + System.currentTimeMillis() + extension;
+        File targetFile = new File(context.getFilesDir(), filenameWithTimestamp);
+        try (InputStream inputStream = context.getContentResolver().openInputStream(sourceUri);
+             OutputStream outputStream = new FileOutputStream(targetFile)) {
 
-            byte[] buffer = new byte[1024];
+            if (inputStream == null) {
+                throw new IOException("Nie można odtworzyć InputStream z URI");
+            }
+
+            byte[] buffer = new byte[8192];
             int length;
-            while (true) {
-                assert inputStream != null;
-                if (!((length = inputStream.read(buffer)) > 0)) break;
+            while ((length = inputStream.read(buffer)) != - 1) {
                 outputStream.write(buffer, 0, length);
             }
-            inputStream.close();
-            outputStream.close();
-            return Uri.fromFile(targetFile);
+            outputStream.flush();
+            return FileProvider.getUriForFile(context, "com.example.todolist.fileprovider", targetFile);
         }
         catch (IOException e) {
             e.printStackTrace();
@@ -168,6 +182,35 @@ public class FileService {
             result = uri.getLastPathSegment();
         }
         return result;
+    }
+
+    public static boolean deleteFileFromInternalStorage(Context context, String filePath) {
+        try {
+            Uri fileUri = Uri.parse(filePath);
+            String localFilePath =  fileUri.getPath();
+            if (localFilePath == null || !localFilePath.contains("/files")) {
+                return false;
+            }
+
+            String filename = localFilePath.substring(localFilePath.indexOf("/files/") + "/files/".length());
+            File file = new File(context.getFilesDir(), filename);
+            if (file.exists()) {
+                return file.delete();
+            }
+            return false;
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+
+//        File file = new File(context.getFilesDir(), filename);
+//        if (file.exists()) {
+//            return file.delete();
+//        }
+//        else {
+//            return false;
+//        }
     }
 
     private static String sanitize(String input) {

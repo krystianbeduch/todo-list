@@ -13,6 +13,7 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MediatorLiveData;
+import androidx.lifecycle.MutableLiveData;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -23,6 +24,7 @@ public class TaskViewModel extends AndroidViewModel {
     private final AttachmentRepository attachmentRepository;
 //    private final TaskWithAtt taskWithAtt;
     private final MediatorLiveData<List<Task>> tasks;
+    private final MutableLiveData<List<Task>> tasksForNotification = new MutableLiveData<>();
     private LiveData<List<Task>> currentSource;
     private SortType currentSortType;
 //    private final LiveData<List<Task>> tasks;
@@ -167,6 +169,26 @@ public class TaskViewModel extends AndroidViewModel {
             });
         }).start();
     }
+
+    public void deleteAttachment(Attachment attachment) {
+        new Thread(() -> {
+            attachmentRepository.deleteAttachment(attachment);
+
+            new Handler(Looper.getMainLooper()).post(() -> {
+                loadTasksBySort(currentSortType);
+            });
+        }).start();
+    }
+
+    public void updateTasksForNotification(List<Task> tasks) {
+        tasksForNotification.setValue(tasks);
+    }
+
+    public LiveData<List<Task>> getTasksForNotification() {
+        return tasksForNotification;
+    }
+
+
 
 //    public void loadTasksWithAttachments() {
 //        new Thread(() -> {

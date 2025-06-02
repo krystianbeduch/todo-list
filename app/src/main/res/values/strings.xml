@@ -22,6 +22,7 @@
     <string name="delete_attachment">Usuń załącznik</string>
     <string name="show_attachment">Zobacz załącznik</string>
     <string name="attachment_icon">Ikonka załącznika</string>
+    <string name="nav_more_text">Więcej</string>
 
     <string-array name="sort_options">
         <item>Data dodania</item>
