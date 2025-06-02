@@ -1,13 +1,14 @@
-package com.example.todolist.domain.model;
+package com.example.todolist.presentation.viewmodel;
+import com.example.todolist.domain.model.Attachment;
+import com.example.todolist.domain.model.SortType;
+import com.example.todolist.domain.model.Task;
 import com.example.todolist.domain.repository.AttachmentRepository;
 import com.example.todolist.domain.repository.TaskRepository;
-import com.example.todolist.domain.services.TaskWithAtt;
 
 import android.app.Application;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
@@ -22,19 +23,17 @@ import java.util.List;
 public class TaskViewModel extends AndroidViewModel {
     private final TaskRepository taskRepository;
     private final AttachmentRepository attachmentRepository;
-//    private final TaskWithAtt taskWithAtt;
     private final MediatorLiveData<List<Task>> tasks;
     private final MutableLiveData<List<Task>> tasksForNotification = new MutableLiveData<>();
     private LiveData<List<Task>> currentSource;
     private SortType currentSortType;
-//    private final LiveData<List<Task>> tasks;
-
+    private final MutableLiveData<Boolean> hasInsertedDummy = new MutableLiveData<>(false);
+    private final MutableLiveData<Boolean> notificationChecked = new MutableLiveData<>(false);
 
     public TaskViewModel(@NonNull Application application) {
         super(application);
         taskRepository = new TaskRepository(application);
         attachmentRepository = new AttachmentRepository(application);
-//        taskWithAtt = new TaskWithAtt(application);
 
         tasks = new MediatorLiveData<>();
         currentSortType = SortType.CREATED_DATE;
@@ -188,9 +187,23 @@ public class TaskViewModel extends AndroidViewModel {
         return tasksForNotification;
     }
 
+    public MutableLiveData<Boolean> getHasInsertedDummy() {
+        return hasInsertedDummy;
+    }
 
+    public void markDummyInserted() {
+        hasInsertedDummy.setValue(true);
+    }
 
-//    public void loadTasksWithAttachments() {
+    public MutableLiveData<Boolean> getNotificationChecked() {
+        return notificationChecked;
+    }
+
+    public void markNotificationChecked() {
+        notificationChecked.setValue(true);
+    }
+
+    //    public void loadTasksWithAttachments() {
 //        new Thread(() -> {
 //            List<Task> taskWithAttachments = taskWithAtt.getTasksWithAttachments();
 //            new Handler(Looper.getMainLooper()).post(() -> {

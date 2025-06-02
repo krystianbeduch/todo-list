@@ -9,7 +9,6 @@
         android:id="@+id/taskTitle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/taskTitle"
         android:textSize="18sp"
         android:textStyle="bold" />
 
@@ -17,9 +16,8 @@
         android:id="@+id/taskDeadline"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/taskDeadline"
-        android:textSize="14sp"
-        android:textColor="#666" />
+        android:textColor="#666"
+        android:textSize="14sp" />
 
     <TextView
         android:id="@+id/taskCreated"

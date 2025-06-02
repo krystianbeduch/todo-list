@@ -1,9 +1,9 @@
 package com.example.todolist.domain.model;
 
 public enum Priority {
-    HIGH(1, "Wysoki"),
-    MEDIUM(2, "Średni"),
-    LOW(3, "Niski");
+    HIGH(0, "Wysoki"),
+    MEDIUM(1, "Średni"),
+    LOW(2, "Niski");
 
 
     private final int value;
@@ -42,5 +42,14 @@ public enum Priority {
             }
         }
         throw new IllegalArgumentException("Unknown display name: " + displayName);
+    }
+
+    public static int getPriorityIndex(Priority priority) {
+        for (Priority p : values()) {
+            if (p.getDisplayName().equals(priority.getDisplayName())) {
+                return p.getValue();
+            }
+        }
+        return 0;
     }
 }

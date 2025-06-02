@@ -18,6 +18,8 @@ import android.widget.Toast;
 
 import com.example.todolist.domain.model.SortType;
 import com.example.todolist.domain.services.FileService;
+import com.example.todolist.presentation.viewmodel.TaskViewModel;
+import com.google.android.material.badge.BadgeDrawable;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import androidx.activity.result.ActivityResultLauncher;
@@ -26,6 +28,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
@@ -41,6 +44,7 @@ public class MainActivity extends AppCompatActivity {
     private ActivityMainBinding binding;
     private ActivityResultLauncher<Intent> filePickerLauncher;
     private static final int NOTIFICATION_PERMISSION_CODE = 1001;
+    private TaskViewModel taskViewModel;
 
 
 
@@ -60,6 +64,18 @@ public class MainActivity extends AppCompatActivity {
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_activity_main);
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
         NavigationUI.setupWithNavController(binding.navView, navController);
+        
+        taskViewModel = new ViewModelProvider(this).get(TaskViewModel.class);
+        taskViewModel.getTasksForNotification().observe(this, tasks -> {
+            BadgeDrawable badge = navView.getOrCreateBadge(R.id.navigation_notifications);
+            if (!tasks.isEmpty()) {
+                badge.setVisible(true);
+                badge.setNumber(tasks.size());
+            }
+            else {
+                badge.setVisible(false);
+            }
+        });
 
         navView.setOnItemSelectedListener(item -> {
             if (item.getItemId() == R.id.nav_more) {
@@ -103,7 +119,6 @@ public class MainActivity extends AppCompatActivity {
                     break;
                 case "Eksportuj zadania":
                     FileService.exportTasksToCsv(this);
-//                    FileService.exportTasksToJson(this);
                     break;
             }
             return true;

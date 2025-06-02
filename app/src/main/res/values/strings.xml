@@ -2,11 +2,8 @@
     <string name="app_name">To-Do List</string>
     <string name="title_home">Home</string>
     <string name="title_add_task">Dodaj zadanie</string>
-    <string name="title_notifications">Notifications</string>
+    <string name="title_notifications">Powiadomienia</string>
 
-    <!--    <string name="headerTextView">To-Do List</string>-->
-    <string name="taskTitle">Task title</string>
-    <string name="taskDeadline">Deadline</string>
     <string name="change_status">Zmień status</string>
     <string name="task_done_text">✔</string>
     <string name="delete_task">Usuń</string>
@@ -23,12 +20,4 @@
     <string name="show_attachment">Zobacz załącznik</string>
     <string name="attachment_icon">Ikonka załącznika</string>
     <string name="nav_more_text">Więcej</string>
-
-    <string-array name="sort_options">
-        <item>Data dodania</item>
-        <item>Tytuł</item>
-        <item>Termin</item>
-        <item>Priorytet</item>
-        <item>Status</item>
-    </string-array>
 </resources>

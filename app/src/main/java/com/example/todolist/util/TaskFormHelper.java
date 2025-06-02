@@ -18,7 +18,7 @@ import androidx.lifecycle.ViewModelStoreOwner;
 
 import com.example.todolist.domain.model.Priority;
 import com.example.todolist.domain.model.Task;
-import com.example.todolist.domain.model.TaskViewModel;
+import com.example.todolist.presentation.viewmodel.TaskViewModel;
 import com.example.todolist.domain.services.Converters;
 
 import java.text.SimpleDateFormat;
@@ -50,8 +50,7 @@ public class TaskFormHelper {
         this.deadlineEditText = deadlineEditText;
         this.prioritySpinner = prioritySpinner;
 
-        this.taskViewModel =
-                new ViewModelProvider((ViewModelStoreOwner) context).get(TaskViewModel.class);
+        this.taskViewModel = new ViewModelProvider((ViewModelStoreOwner) context).get(TaskViewModel.class);
 
         setupDeadlinePicker();
         setupPrioritySpinner();
