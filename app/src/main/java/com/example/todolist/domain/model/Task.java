@@ -40,6 +40,7 @@ public class Task {
     public static final String FIELD_IS_DONE = "isDone";
     public static final String FIELD_CREATED_AT = "createdAt";
 
+    @Ignore
     public Task() {
         title = "";
         priority = Priority.HIGH;

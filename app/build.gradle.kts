@@ -32,8 +32,8 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
+        sourceCompatibility = JavaVersion.VERSION_21
+        targetCompatibility = JavaVersion.VERSION_21
     }
     buildFeatures {
         viewBinding = true
@@ -42,15 +42,12 @@ android {
 
 dependencies {
     implementation(libs.activity)
-    val roomVersion = "2.7.1"
-    implementation("androidx.room:room-runtime:$roomVersion")
-    annotationProcessor("androidx.room:room-compiler:$roomVersion")
-    testImplementation("androidx.room:room-testing:$roomVersion")
-    testImplementation("androidx.arch.core:core-testing:2.2.0")
-    testImplementation("junit:junit:4.13.2")
+    implementation(libs.room.runtime)
+    annotationProcessor(libs.androidx.room.compiler)
+    testImplementation(libs.androidx.room.testing)
+    testImplementation(libs.androidx.core.testing)
     implementation(libs.gson)
     implementation(libs.simple.xml)
-
     compileOnly(libs.lombok)
     annotationProcessor(libs.lombok)
 

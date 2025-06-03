@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.ForeignKey;
+import androidx.room.Index;
 import androidx.room.PrimaryKey;
 
 @Entity(foreignKeys = @ForeignKey(
@@ -11,7 +12,9 @@ import androidx.room.PrimaryKey;
         parentColumns = "id",       // PK Task
         childColumns = "task_id",   // FK Attachment
         onDelete = ForeignKey.CASCADE
-))
+    ),
+        indices = {@Index("task_id")}
+)
 public class Attachment {
     @PrimaryKey(autoGenerate = true)
     private int id;
