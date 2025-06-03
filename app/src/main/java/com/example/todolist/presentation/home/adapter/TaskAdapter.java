@@ -12,8 +12,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.todolist.R;
 import com.example.todolist.domain.model.Task;
-import com.example.todolist.domain.services.Converters;
-import com.example.todolist.util.BaseTaskAdapter;
+import com.example.todolist.util.converter.Converters;
+import com.example.todolist.util.task.BaseTaskAdapter;
 
 import java.util.List;
 

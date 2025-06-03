@@ -1,4 +1,4 @@
-package com.example.todolist.util;
+package com.example.todolist.util.task;
 
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
@@ -19,7 +19,7 @@ import androidx.lifecycle.ViewModelStoreOwner;
 import com.example.todolist.domain.model.Priority;
 import com.example.todolist.domain.model.Task;
 import com.example.todolist.presentation.viewmodel.TaskViewModel;
-import com.example.todolist.domain.services.Converters;
+import com.example.todolist.util.converter.Converters;
 
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
@@ -31,7 +31,7 @@ import java.util.Objects;
 public class TaskFormHelper {
 
     private final Context context;
-    private final LifecycleOwner lifecycleOwner;
+//    private final LifecycleOwner lifecycleOwner;
     private final Calendar selectedDateTime = Calendar.getInstance();
     private final TaskViewModel taskViewModel;
 
@@ -43,9 +43,9 @@ public class TaskFormHelper {
         void onSuccess(Task task);
     }
 
-    public TaskFormHelper(Context context, LifecycleOwner lifecycleOwner, EditText titleEditText, EditText deadlineEditText, Spinner prioritySpinner) {
+    public TaskFormHelper(Context context, EditText titleEditText, EditText deadlineEditText, Spinner prioritySpinner) {
         this.context = context;
-        this.lifecycleOwner = lifecycleOwner;
+//        this.lifecycleOwner = lifecycleOwner;
         this.titleEditText = titleEditText;
         this.deadlineEditText = deadlineEditText;
         this.prioritySpinner = prioritySpinner;

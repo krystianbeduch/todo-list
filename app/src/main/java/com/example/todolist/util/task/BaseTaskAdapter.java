@@ -1,4 +1,4 @@
-package com.example.todolist.util;
+package com.example.todolist.util.task;
 
 import android.graphics.Color;
 import android.view.View;
@@ -10,7 +10,7 @@ import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.todolist.domain.model.Task;
-import com.example.todolist.domain.services.Converters;
+import com.example.todolist.util.converter.Converters;
 
 import java.util.List;
 
@@ -24,7 +24,6 @@ public abstract class BaseTaskAdapter<VH extends RecyclerView.ViewHolder> extend
 
     public void setTasks(@NonNull List<Task> tasks) {
         this.tasks = tasks;
-//        notifyDataSetChanged();
     }
 
     @Override

@@ -5,18 +5,15 @@ import org.simpleframework.xml.Root;
 
 import java.util.List;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
+@Getter
+@NoArgsConstructor
+@AllArgsConstructor
 @Root(name = "Tasks", strict = false)
 public class TaskXmlWrapper {
     @ElementList(name = "Tasks", entry = "Task", inline = true)
     private List<TaskXml> taskXmlList;
-
-    public TaskXmlWrapper() {}
-
-    public TaskXmlWrapper(List<TaskXml> taskXmlList) {
-        this.taskXmlList = taskXmlList;
-    }
-
-    public List<TaskXml> getTaskXmlList() {
-        return taskXmlList;
-    }
 }

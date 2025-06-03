@@ -22,33 +22,30 @@ import android.widget.Toast;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
-import androidx.core.content.FileProvider;
 import androidx.core.view.MenuHost;
 import androidx.core.view.MenuProvider;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
-import com.example.todolist.EditTaskActivity;
 import com.example.todolist.R;
+import com.example.todolist.activity.EditTaskActivity;
 import com.example.todolist.databinding.FragmentHomeBinding;
 import com.example.todolist.domain.model.Attachment;
 import com.example.todolist.domain.model.NotificationType;
 import com.example.todolist.domain.model.Priority;
 import com.example.todolist.domain.model.SortType;
 import com.example.todolist.domain.model.Task;
+import com.example.todolist.presentation.home.adapter.TaskAdapter;
 import com.example.todolist.presentation.viewmodel.TaskViewModel;
 import com.example.todolist.util.file.FileService;
-import com.example.todolist.presentation.home.adapter.TaskAdapter;
-import com.example.todolist.util.NotificationUtils;
+import com.example.todolist.util.notification.NotificationUtils;
 
-import java.io.File;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 public class HomeFragment extends Fragment {
@@ -71,7 +68,6 @@ public class HomeFragment extends Fragment {
         taskViewModel = new ViewModelProvider(requireActivity()).get(TaskViewModel.class);
 //        taskViewModel.deleteAll(this::insertDummyTasks);
         taskViewModel.getTasks().observe(getViewLifecycleOwner(), tasks -> {
-//            taskAdapter.setTasks(tasks);
             taskAdapter.updateTasks(tasks);
 
             taskViewModel.getHasInsertedDummy().observe(getViewLifecycleOwner(), hasInserted -> {
@@ -149,10 +145,6 @@ public class HomeFragment extends Fragment {
                         new Intent(getContext(), EditTaskActivity.class)
                                 .putExtra("taskId", task.getId())
                 );
-//
-//                Intent intent = new Intent(getContext(), EditTaskActivity.class);
-//                intent.putExtra("taskId", task.getId());
-//                startActivity(intent);
             }
 
             @Override
@@ -297,27 +289,19 @@ public class HomeFragment extends Fragment {
     }
 
     private void openAttachment(Context context, Attachment attachment) {
-        String filePath = attachment.getFilePath().replace("file://", "").replace("content://", "");
-        File file = new File(context.getFilesDir(), filePath);
-        Uri uri = FileProvider.getUriForFile(
-                requireContext(),
-                context.getPackageName() + ".fileprovider",
-                file
-        );
-
-        Intent intent = new Intent(Intent.ACTION_VIEW);
-        intent.setDataAndType(uri, context.getContentResolver().getType(uri));
-        intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-//        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-
         try {
+            Uri uri = Uri.parse(attachment.getFilePath());
+            Intent intent = new Intent(Intent.ACTION_VIEW);
+            intent.setDataAndType(uri, context.getContentResolver().getType(uri));
+            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+
             context.startActivity(intent);
         }
         catch (ActivityNotFoundException e) {
             Toast.makeText(context, "Brak aplikacji do otwarcia pliku", Toast.LENGTH_SHORT).show();
         }
         catch (Exception e) {
-            Log.e("Open Attachment", Objects.requireNonNull(e.getMessage()));
+            Log.e("Open attachment error", Log.getStackTraceString(e));
         }
     }
 
@@ -340,18 +324,18 @@ public class HomeFragment extends Fragment {
         for (Task task : tasks) {
             if (!task.isDone()) {
                 if (task.getDeadline().isBefore(now)) {
+                    task.setNotificationType(NotificationType.OVERDUE);
+                    tasksToNotify.add(task);
                     if (!isNotificationShown) {
                         NotificationUtils.showTaskNotification(requireContext(), task);
                     }
-                    tasksToNotify.add(task);
-                    task.setNotificationType(NotificationType.OVERDUE);
                 }
                 else if (task.getDeadline().isAfter(now) && task.getDeadline().isBefore(threshold)) {
+                    task.setNotificationType(NotificationType.UPCOMING);
+                    tasksToNotify.add(task);
                     if (!isNotificationShown) {
                         NotificationUtils.showTaskNotification(requireContext(), task);
                     }
-                    tasksToNotify.add(task);
-                    task.setNotificationType(NotificationType.UPCOMING);
                 }
             }
         }

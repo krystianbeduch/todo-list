@@ -1,24 +1,15 @@
-package com.example.todolist;
+package com.example.todolist.activity;
 
 import android.Manifest;
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.provider.OpenableColumns;
-import android.util.Log;
 import android.view.View;
 import android.widget.PopupMenu;
 import android.widget.Toast;
-
-import com.example.todolist.domain.model.FileType;
-import com.example.todolist.presentation.viewmodel.TaskViewModel;
-import com.example.todolist.util.file.FileService;
-import com.google.android.material.badge.BadgeDrawable;
-import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
@@ -31,10 +22,15 @@ import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
+import com.example.todolist.R;
 import com.example.todolist.databinding.ActivityMainBinding;
+import com.example.todolist.domain.model.FileType;
+import com.example.todolist.presentation.viewmodel.TaskViewModel;
+import com.example.todolist.util.file.FileService;
+import com.google.android.material.badge.BadgeDrawable;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import java.util.Arrays;
-import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -43,7 +39,7 @@ public class MainActivity extends AppCompatActivity {
     private FileType currentImportFileType;
     private static final int NOTIFICATION_PERMISSION_CODE = 1001;
     private TaskViewModel taskViewModel;
-    
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -96,8 +92,8 @@ public class MainActivity extends AppCompatActivity {
                     if (result.getResultCode() == RESULT_OK && result.getData() != null) {
                         Uri fileUri = result.getData().getData();
                         if (fileUri != null) {
-                            String fileName = getFileName(fileUri);
-                            if (fileName != null && isSupportedExtensionForCurrentFileType(fileName)) {
+                            String fileName = FileService.getFileNameFromFilePicker(this, fileUri);
+                            if (FileService.isSupportedExtensionForFileType(currentImportFileType, fileName)) {
                                 taskViewModel.importTasksFromFile(this, fileUri, currentImportFileType);
                             }
                             else {
@@ -108,47 +104,6 @@ public class MainActivity extends AppCompatActivity {
                 }
         );
     }
-
-    private String getFileName(Uri uri) {
-        String result = null;
-        if (Objects.equals(uri.getScheme(), "content")) {
-            try (Cursor cursor = getContentResolver().query(uri, null, null, null, null)) {
-                if (cursor != null && cursor.moveToFirst()) {
-                    int index = cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME);
-                    if (index >= 0) {
-                        result = cursor.getString(index);
-                    }
-                }
-            }
-        }
-        if (result == null) {
-            result = uri.getPath();
-            assert result != null;
-            int cut = result.lastIndexOf('/');
-            if (cut != -1) {
-                result = result.substring(cut + 1);
-            }
-        }
-        return result;
-    }
-
-    private boolean isSupportedExtensionForCurrentFileType(String fileName) {
-        if (currentImportFileType == null) {
-            return false;
-        }
-        String lower = fileName.toLowerCase();
-        switch (currentImportFileType) {
-            case CSV:
-                return lower.endsWith(".csv");
-            case JSON:
-                return lower.endsWith(".json");
-            case XML:
-                return lower.endsWith(".xml");
-            default:
-                return false;
-        }
-    }
-
 
     private void showMorePopup(View anchor) {
         PopupMenu popupMenu = new PopupMenu(this, anchor);
@@ -189,7 +144,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void openFilePicker(FileType fileType) {
         Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
-        intent.setType(FileService.getMimeTypeForFormat(fileType));
+        intent.setType(fileType.getMimeType());
         intent.addCategory(Intent.CATEGORY_OPENABLE);
         filePickerLauncher.launch(Intent.createChooser(intent, "Wybierz plik " + fileType.name()));
     }
@@ -215,5 +170,4 @@ public class MainActivity extends AppCompatActivity {
         super.onDestroy();
         binding = null;
     }
-
 }

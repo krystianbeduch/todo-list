@@ -1,5 +1,10 @@
 package com.example.todolist.domain.model;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
+@Getter
+@AllArgsConstructor
 public enum Priority {
     HIGH(0, "Wysoki"),
     MEDIUM(1, "Średni"),
@@ -8,19 +13,6 @@ public enum Priority {
 
     private final int value;
     private final String displayName;
-
-    Priority(int value, String displayName) {
-        this.value = value;
-        this.displayName = displayName;
-    }
-
-    public int getValue() {
-        return value;
-    }
-
-    public String getDisplayName() {
-        return displayName;
-    }
 
     public static Priority fromInt(int value) {
         for (Priority p : values()) {

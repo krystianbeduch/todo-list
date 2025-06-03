@@ -18,7 +18,6 @@ public interface AttachmentDao {
     List<Attachment> getAttachmentsForTask(int taskId);
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insert(Attachment attachment);
-
     @Delete
     void delete(Attachment attachment);
 }

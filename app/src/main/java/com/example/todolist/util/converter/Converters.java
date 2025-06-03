@@ -1,6 +1,4 @@
-package com.example.todolist.domain.services;
-
-import android.text.TextUtils;
+package com.example.todolist.util.converter;
 
 import androidx.room.TypeConverter;
 
@@ -9,14 +7,11 @@ import com.example.todolist.domain.model.Priority;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
-import java.util.Arrays;
-import java.util.List;
 
 public class Converters {
     private static final DateTimeFormatter formatter = DateTimeFormatter.ISO_LOCAL_DATE_TIME;
     private static final DateTimeFormatter formatterWithDayName = DateTimeFormatter.ofPattern("EEEE, dd.MM.yyyy HH:mm");
     private static final DateTimeFormatter formFormatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
-
 
     @TypeConverter
     public static LocalDateTime fromStringToLocalDateTimeISO(String value) {
@@ -36,16 +31,6 @@ public class Converters {
     @TypeConverter
     public static Priority fromIntToPriority(Integer value) {
         return value == null ? null : Priority.fromInt(value);
-    }
-
-    @TypeConverter
-    public static List<String> fromStringToList(String value) {
-        return Arrays.asList(value.split("\\|"));
-    }
-
-    @TypeConverter
-    public static String fromListToString(List<String> list) {
-        return TextUtils.join("|", list);
     }
 
     public static String formatLocalDateTimeToStringWithDayName(LocalDateTime dateTime) {

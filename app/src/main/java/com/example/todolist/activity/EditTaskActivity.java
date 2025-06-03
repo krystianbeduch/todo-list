@@ -1,4 +1,4 @@
-package com.example.todolist;
+package com.example.todolist.activity;
 
 import android.os.Bundle;
 import android.widget.Toast;
@@ -9,8 +9,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.example.todolist.databinding.FragmentTaskFormBinding;
 import com.example.todolist.domain.model.Priority;
 import com.example.todolist.domain.model.Task;
-import com.example.todolist.domain.services.Converters;
-import com.example.todolist.util.TaskFormHelper;
+import com.example.todolist.util.converter.Converters;
+import com.example.todolist.util.task.TaskFormHelper;
 
 public class EditTaskActivity extends AppCompatActivity {
 
@@ -20,7 +20,6 @@ public class EditTaskActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-//        setContentView(R.layout.fragment_task_form);
         binding = FragmentTaskFormBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
@@ -37,11 +36,9 @@ public class EditTaskActivity extends AppCompatActivity {
 
         TaskFormHelper helper = new TaskFormHelper(
                 this,
-                this,
                 binding.taskTitle,
                 binding.taskDeadline,
                 binding.taskPriority
-
         );
 
         helper.getTaskViewModel().getTaskById(taskId).observe(this, task -> {
@@ -52,11 +49,9 @@ public class EditTaskActivity extends AppCompatActivity {
             }
 
             taskToEdit = task;
-
             binding.taskTitle.setText(task.getTitle());
             binding.taskDeadline.setText(Converters.fromLocalDateTimeToString(task.getDeadline()));
             binding.taskPriority.setSelection(Priority.getPriorityIndex(task.getPriority()));
-
             binding.taskSaveButton.setOnClickListener(v -> helper.handleSave(updatedTask -> finish(), true, taskToEdit));
         });
     }

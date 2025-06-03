@@ -9,7 +9,7 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
 import com.example.todolist.databinding.FragmentTaskFormBinding;
-import com.example.todolist.util.TaskFormHelper;
+import com.example.todolist.util.task.TaskFormHelper;
 
 public class AddTaskFragment extends Fragment {
 
@@ -21,7 +21,6 @@ public class AddTaskFragment extends Fragment {
         binding = FragmentTaskFormBinding.inflate(inflater, container, false);
         TaskFormHelper helper = new TaskFormHelper(
                 requireContext(),
-                getViewLifecycleOwner(),
                 binding.taskTitle,
                 binding.taskDeadline,
                 binding.taskPriority

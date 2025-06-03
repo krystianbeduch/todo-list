@@ -20,7 +20,6 @@ public class NotificationsFragment extends Fragment {
 
     private FragmentNotificationsBinding binding;
     private NotificationAdapter notificationAdapter;
-    private TaskViewModel taskViewModel;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -30,7 +29,7 @@ public class NotificationsFragment extends Fragment {
         binding.tasksRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         binding.tasksRecyclerView.setAdapter(notificationAdapter);
 
-        taskViewModel = new ViewModelProvider(requireActivity()).get(TaskViewModel.class);
+        TaskViewModel taskViewModel = new ViewModelProvider(requireActivity()).get(TaskViewModel.class);
         taskViewModel.getTasksForNotification().observe(getViewLifecycleOwner(), tasks -> notificationAdapter.setTasks(tasks));
 
         return binding.getRoot();

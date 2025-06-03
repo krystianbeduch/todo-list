@@ -6,7 +6,7 @@ import com.google.gson.stream.JsonWriter;
 
 import com.example.todolist.domain.model.Priority;
 import com.example.todolist.domain.model.Task;
-import com.example.todolist.domain.services.Converters;
+import com.example.todolist.util.converter.Converters;
 
 import java.io.IOException;
 
@@ -14,12 +14,12 @@ public class TaskTypeJsonAdapter extends TypeAdapter<Task> {
     @Override
     public void write(JsonWriter out, Task task) throws IOException {
         out.beginObject();
-        out.name("id").value(task.getId());
-        out.name("title").value(task.getTitle());
-        out.name("deadline").value(Converters.fromLocalDateTimeToString(task.getDeadline()));
-        out.name("priority").value(task.getPriority().getDisplayName());
-        out.name("isDone").value(task.isDone());
-        out.name("createdAt").value(Converters.fromLocalDateTimeToString(task.getCreatedAt()));
+        out.name(Task.FIELD_ID).value(task.getId());
+        out.name(Task.FIELD_TITLE).value(task.getTitle());
+        out.name(Task.FIELD_DEADLINE).value(Converters.fromLocalDateTimeToString(task.getDeadline()));
+        out.name(Task.FIELD_PRIORITY).value(task.getPriority().getDisplayName());
+        out.name(Task.FIELD_IS_DONE).value(task.isDone());
+        out.name(Task.FIELD_CREATED_AT).value(Converters.fromLocalDateTimeToString(task.getCreatedAt()));
         out.endObject();
     }
 
@@ -30,19 +30,19 @@ public class TaskTypeJsonAdapter extends TypeAdapter<Task> {
         while (in.hasNext()) {
             String name = in.nextName();
             switch (name) {
-                case "title":
+                case Task.FIELD_TITLE:
                     task.setTitle(in.nextString());
                     break;
-                case "deadline":
+                case Task.FIELD_DEADLINE:
                     task.setDeadline(Converters.fromStringToLocalDateTime(in.nextString()));
                     break;
-                case "priority":
+                case Task.FIELD_PRIORITY:
                     task.setPriority(Priority.fromDisplayName(in.nextString()));
                     break;
-                case "isDone":
+                case Task.FIELD_IS_DONE:
                     task.setDone(in.nextBoolean());
                     break;
-                case "createdAt":
+                case Task.FIELD_CREATED_AT:
                     task.setCreatedAt(Converters.fromStringToLocalDateTime(in.nextString()));
                     break;
                 default:

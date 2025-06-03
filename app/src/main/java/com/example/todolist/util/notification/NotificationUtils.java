@@ -1,4 +1,4 @@
-package com.example.todolist.util;
+package com.example.todolist.util.notification;
 
 import android.Manifest;
 import android.app.NotificationChannel;
@@ -14,7 +14,7 @@ import androidx.core.content.ContextCompat;
 import com.example.todolist.R;
 import com.example.todolist.domain.model.NotificationType;
 import com.example.todolist.domain.model.Task;
-import com.example.todolist.domain.services.Converters;
+import com.example.todolist.util.converter.Converters;
 
 public class NotificationUtils {
     public static final String CHANNEL_ID = "tasks_channel";
@@ -50,7 +50,7 @@ public class NotificationUtils {
         }
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CHANNEL_ID)
-                .setSmallIcon(R.drawable.ic_notifications_black_24dp) // TODO: Ikonka powiadomien
+                .setSmallIcon(R.drawable.ic_notifications_black_24dp)
                 .setContentTitle(notificationTitle)
                 .setContentText(task.getTitle() + " - termin:\n " + Converters.formatLocalDateTimeToStringWithDayName(task.getDeadline()))
                 .setPriority(NotificationCompat.PRIORITY_HIGH)

@@ -20,7 +20,7 @@ import com.example.todolist.data.db.AppDatabase;
 import com.example.todolist.domain.model.FileType;
 import com.example.todolist.domain.model.Priority;
 import com.example.todolist.domain.model.Task;
-import com.example.todolist.domain.services.Converters;
+import com.example.todolist.util.converter.Converters;
 import com.example.todolist.util.file.xml.TaskXml;
 import com.example.todolist.util.file.xml.TaskXmlWrapper;
 import com.google.gson.Gson;
@@ -39,50 +39,21 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.lang.reflect.Type;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 public class FileService {
     public static void exportTasksToCsv(Context context) {
-        AsyncTask.execute(() -> {
+        writeToFile(context, FileType.CSV, outputStream -> {
             try {
                 AppDatabase db = AppDatabase.getInstance(context.getApplicationContext());
                 List<Task> allTasks = db.taskDao().getAllSync();
 
-                String filename = "task_export_" + System.currentTimeMillis() + ".csv";
-                Uri fileUri = null;
-                OutputStream outputStream;
-
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                    ContentValues values = new ContentValues();
-                    values.put(MediaStore.Downloads.DISPLAY_NAME, filename);
-                    values.put(MediaStore.Downloads.MIME_TYPE, "text/csv");
-                    values.put(MediaStore.Downloads.RELATIVE_PATH, Environment.DIRECTORY_DOWNLOADS);
-
-                    Uri uri = MediaStore.Downloads.EXTERNAL_CONTENT_URI;
-                    fileUri = context.getContentResolver().insert(uri, values);
-                    if (fileUri == null) {
-                        showToast(context, "Błąd: nie można utworzyć pliku");
-                        return;
-                    }
-                    outputStream = context.getContentResolver().openOutputStream(fileUri);
-                }
-                else {
-                    // Starsze androidy
-                    String path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath();
-                    File file = new File(path, filename);
-                    outputStream = new FileOutputStream(file);
-                }
-
-                if (outputStream == null) {
-                    showToast(context, "Błąd: nie można otworzyć strumienia");
-                    return;
-                }
-
                 StringBuilder csvBuilder = new StringBuilder();
                 csvBuilder.append("ID;Tytuł;Termin;Priorytet;Status;Data dodania\n");
+
                 for (Task task : allTasks) {
                     csvBuilder.append(task.getId()).append(";");
                     csvBuilder.append(sanitize(task.getTitle())).append(";");
@@ -91,33 +62,18 @@ public class FileService {
                     csvBuilder.append(task.isDone() ? 1 : 0).append(";");
                     csvBuilder.append(Converters.fromLocalDateTimeToString(task.getCreatedAt())).append("\n");
                 }
-
                 outputStream.write(csvBuilder.toString().getBytes(StandardCharsets.UTF_8));
-                outputStream.flush();
-                outputStream.close();
-
-                showToast(context, "Wyeksportowano do: " + fileUri);
-                Log.i("Export tasks" , String.valueOf(fileUri));
             }
             catch (Exception e) {
-                e.printStackTrace();
-                showToast(context, "Błąd eksportu: " + e.getMessage());
-                Log.e("Error export" , e.getMessage());
+                showToast(context, "Błąd eksportu CSV: " + e.getMessage());
+                Log.e("Error CSV export" , Log.getStackTraceString(e));
             }
         });
     }
 
     public static void importTasksFromCsv(Context context, Uri fileUri) {
-        AsyncTask.execute(() -> {
-            try {
-                InputStream inputStream = context.getContentResolver().openInputStream(fileUri);
-                if (inputStream == null) {
-                    showToast(context, "Nie udało się otworzyć pliku CSV");
-                    Log.e("Import error", "Cannot open CSV file" + fileUri);
-                    return;
-                }
-
-                BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
+        readFromFile(context, fileUri, FileType.CSV, inputStream -> {
+            try (BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8))) {
                 String line;
                 boolean isFirstLine = true;
                 AppDatabase db = AppDatabase.getInstance(context.getApplicationContext());
@@ -127,7 +83,6 @@ public class FileService {
                         isFirstLine = false;
                         continue;
                     }
-
                     String[] fields = line.split(";");
                     if (fields.length < 6) {
                         continue;
@@ -141,54 +96,19 @@ public class FileService {
                     task.setCreatedAt(Converters.fromStringToLocalDateTime(fields[5]));
                     db.taskDao().insert(task);
                 }
-                reader.close();
-                inputStream.close();
-                showToast(context, "Import zakończony");
-                Log.i("Import success" , String.valueOf(fileUri));
             }
             catch (Exception e) {
-                e.printStackTrace();
-                showToast(context, "Błąd importu: " + e.getMessage());
-                Log.e("Error import" , e.getMessage());
+                showToast(context, "Błąd importu CSV: " + e.getMessage());
+                Log.e("Error CSV import" , Log.getStackTraceString(e));
             }
         });
     }
 
     public static void exportTasksToJson(Context context) {
-        AsyncTask.execute(() -> {
+        writeToFile(context, FileType.JSON, outputStream -> {
             try {
                 AppDatabase db = AppDatabase.getInstance(context.getApplicationContext());
                 List<Task> allTasks = db.taskDao().getAllSync();
-
-                String filename = "task_export_" + System.currentTimeMillis() + ".json";
-                Uri fileUri = null;
-                OutputStream outputStream;
-
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                    ContentValues values = new ContentValues();
-                    values.put(MediaStore.Downloads.DISPLAY_NAME, filename);
-                    values.put(MediaStore.Downloads.MIME_TYPE, "application/json");
-                    values.put(MediaStore.Downloads.RELATIVE_PATH, Environment.DIRECTORY_DOWNLOADS);
-
-                    Uri uri = MediaStore.Downloads.EXTERNAL_CONTENT_URI;
-                    fileUri = context.getContentResolver().insert(uri, values);
-                    if (fileUri == null) {
-                        showToast(context, "Błąd: nie można utworzyć pliku JSON");
-                        return;
-                    }
-                    outputStream = context.getContentResolver().openOutputStream(fileUri);
-                }
-                else {
-                    // Starsze androidy
-                    String path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath();
-                    File file = new File(path, filename);
-                    outputStream = new FileOutputStream(file);
-                }
-
-                if (outputStream == null) {
-                    showToast(context, "Błąd: nie można otworzyć strumienia");
-                    return;
-                }
 
                 Gson gson = new GsonBuilder()
                         .registerTypeAdapter(Task.class, new TaskTypeJsonAdapter())
@@ -197,43 +117,18 @@ public class FileService {
 
                 String json = gson.toJson(allTasks);
 
-//                StringBuilder csvBuilder = new StringBuilder();
-//                csvBuilder.append("ID;Tytuł;Termin;Priorytet;Status;Data dodania\n");
-//                for (Task task : allTasks) {
-//                    csvBuilder.append(task.getId()).append(";");
-//                    csvBuilder.append(sanitize(task.getTitle())).append(";");
-//                    csvBuilder.append(Converters.fromLocalDateTimeToString(task.getDeadline())).append(";");
-//                    csvBuilder.append(task.getPriority().getDisplayName()).append(";");
-//                    csvBuilder.append(task.isDone() ? 1 : 0).append(";");
-//                    csvBuilder.append(Converters.fromLocalDateTimeToString(task.getCreatedAt())).append("\n");
-//                }
-
                 outputStream.write(json.getBytes(StandardCharsets.UTF_8));
-                outputStream.flush();
-                outputStream.close();
-
-                showToast(context, "Wyeksportowano JSON do: " + fileUri);
-                Log.i("Export tasks to JSON" , String.valueOf(fileUri));
             }
             catch (Exception e) {
-                e.printStackTrace();
                 showToast(context, "Błąd eksportu JSON: " + e.getMessage());
-                Log.e("Error JSON export" , e.getMessage());
+                Log.e("Error JSON export" , Log.getStackTraceString(e));
             }
         });
     }
 
     public static void importTasksFromJson(Context context, Uri fileUri) {
-        AsyncTask.execute(() -> {
-            try {
-                InputStream inputStream = context.getContentResolver().openInputStream(fileUri);
-                if (inputStream == null) {
-                    showToast(context, "Nie udało się otworzyć pliku JSON");
-                    Log.e("Import error", "Cannot open JSON file" + fileUri);
-                    return;
-                }
-
-                BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
+        readFromFile(context, fileUri, FileType.JSON, inputStream -> {
+            try (BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8))) {
                 Gson gson = new GsonBuilder()
                         .registerTypeAdapter(Task.class, new TaskTypeJsonAdapter())
                         .create();
@@ -245,55 +140,19 @@ public class FileService {
                 for (Task task : tasks) {
                     db.taskDao().insert(task);
                 }
-
-                reader.close();
-                inputStream.close();
-                showToast(context, "Import zakończony");
-                Log.i("Import success" , String.valueOf(fileUri));
             }
             catch (Exception e) {
-                e.printStackTrace();
-                showToast(context, "Błąd importu: " + e.getMessage());
-                Log.e("Error import" , e.getMessage());
+                showToast(context, "Błąd importu JSON: " + e.getMessage());
+                Log.e("Error JSON import" , Log.getStackTraceString(e));
             }
         });
     }
 
     public static void exportTasksToXml(Context context) {
-        AsyncTask.execute(() -> {
+        writeToFile(context, FileType.XML, outputStream -> {
             try {
                 AppDatabase db = AppDatabase.getInstance(context.getApplicationContext());
                 List<Task> allTasks = db.taskDao().getAllSync();
-
-                String filename = "task_export_" + System.currentTimeMillis() + ".xml";
-                Uri fileUri = null;
-                OutputStream outputStream;
-
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                    ContentValues values = new ContentValues();
-                    values.put(MediaStore.Downloads.DISPLAY_NAME, filename);
-                    values.put(MediaStore.Downloads.MIME_TYPE, "application/xml");
-                    values.put(MediaStore.Downloads.RELATIVE_PATH, Environment.DIRECTORY_DOWNLOADS);
-
-                    Uri uri = MediaStore.Downloads.EXTERNAL_CONTENT_URI;
-                    fileUri = context.getContentResolver().insert(uri, values);
-                    if (fileUri == null) {
-                        showToast(context, "Błąd: nie można utworzyć pliku XML");
-                        return;
-                    }
-                    outputStream = context.getContentResolver().openOutputStream(fileUri);
-                }
-                else {
-                    // Starsze androidy
-                    String path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath();
-                    File file = new File(path, filename);
-                    outputStream = new FileOutputStream(file);
-                }
-
-                if (outputStream == null) {
-                    showToast(context, "Błąd: nie można otworzyć strumienia");
-                    return;
-                }
 
                 List<TaskXml> taskXmlList = allTasks.stream()
                         .map(TaskXml::new)
@@ -302,68 +161,100 @@ public class FileService {
                 TaskXmlWrapper wrapper = new TaskXmlWrapper(taskXmlList);
                 Serializer serializer = new Persister();
                 serializer.write(wrapper, outputStream);
-
-                outputStream.flush();
-                outputStream.close();
-
-                showToast(context, "Wyeksportowano XML do: " + fileUri);
-                Log.i("Export tasks to JSON" , String.valueOf(fileUri));
             }
             catch (Exception e) {
-                e.printStackTrace();
                 showToast(context, "Błąd eksportu XML: " + e.getMessage());
-                Log.e("Error XML export" , e.getMessage());
+                Log.e("Error XML export" , Log.getStackTraceString(e));
             }
         });
     }
 
     public static void importTasksFromXml(Context context, Uri fileUri) {
-        AsyncTask.execute(() -> {
+        readFromFile(context, fileUri, FileType.XML, inputStream -> {
             try {
-                InputStream inputStream = context.getContentResolver().openInputStream(fileUri);
-                if (inputStream == null) {
-                    showToast(context, "Nie udało się otworzyć pliku XML");
-                    Log.e("Import error", "Cannot open XML file" + fileUri);
-                    return;
-                }
-
                 Serializer serializer = new Persister();
                 TaskXmlWrapper wrapper = serializer.read(TaskXmlWrapper.class, inputStream);
 
-                List<TaskXml> taskXmlList = wrapper.getTaskXmlList();
-                List<Task> tasks = new ArrayList<>();
-                for (TaskXml taskXml : taskXmlList) {
-                    tasks.add(taskXml.toTask());
-                }
+                List<Task> tasks = wrapper.getTaskXmlList()
+                        .stream()
+                        .map(TaskXml::toTask)
+                        .collect(Collectors.toList());
 
                 AppDatabase db = AppDatabase.getInstance(context.getApplicationContext());
                 for (Task task : tasks) {
                     db.taskDao().insert(task);
                 }
-
-                inputStream.close();
-                showToast(context, "Import XML zakończony");
-                Log.i("Import XML success" , String.valueOf(fileUri));
             }
             catch (Exception e) {
-                e.printStackTrace();
-                showToast(context, "Błąd importu XML: " + e.getMessage());
-                Log.e("Error XML import" , e.getMessage());
+                showToast(context, "Błąd importu JSON: " + e.getMessage());
+                Log.e("Error JSON import" , Log.getStackTraceString(e));
             }
         });
     }
 
-    public static String getMimeTypeForFormat(FileType fileType) {
-        switch (fileType) {
-            case CSV:
-                return "text/csv";
-            case JSON:
-                return "application/json";
-            case XML:
-                return "application/xml";
-            default:
-                return "*/*";
+    private static OutputStream openOutputStream(Context context, String filename, FileType fileType) throws IOException {
+        OutputStream outputStream;
+        Uri fileUri;
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            ContentValues values = new ContentValues();
+            values.put(MediaStore.Downloads.DISPLAY_NAME, filename);
+            values.put(MediaStore.Downloads.MIME_TYPE, fileType.getMimeType());
+            values.put(MediaStore.Downloads.RELATIVE_PATH, Environment.DIRECTORY_DOWNLOADS);
+
+            Uri uri = MediaStore.Downloads.EXTERNAL_CONTENT_URI;
+            fileUri = context.getContentResolver().insert(uri, values);
+            if (fileUri == null) {
+                throw new IOException("Nie można utworzyć pliku " + fileType.name());
+            }
+            outputStream = context.getContentResolver().openOutputStream(fileUri);
         }
+        else {
+            // Starsze androidy
+            String path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath();
+            File file = new File(path, filename);
+            outputStream = new FileOutputStream(file);
+        }
+
+        if (outputStream == null) {
+            throw new IOException("Nie można otworzyć strumienia do zapisu " + fileType.name());
+        }
+        return outputStream;
+    }
+
+    private static InputStream openInputStream(Context context, Uri fileUri, FileType fileType) throws IOException {
+        InputStream inputStream = context.getContentResolver().openInputStream(fileUri);
+        if (inputStream == null) {
+            throw new IOException("Nie udało się otworzyć pliku " + fileType.name());
+        }
+        return inputStream;
+    }
+
+    private static void writeToFile(Context context, FileType fileType, Consumer<OutputStream> writer) {
+        String filename = "task_export_" + System.currentTimeMillis() + fileType.getExtension();
+        AsyncTask.execute(() -> {
+            try (OutputStream os = openOutputStream(context, filename, fileType)) {
+                writer.accept(os);
+                showToast(context, "Wyeksportowano " + fileType.name());
+            }
+            catch (Exception e) {
+                showToast(context, "Błąd eksportu " + fileType.name() + ": " + e.getMessage());
+                Log.e("Error export" + fileType.name(), Log.getStackTraceString(e));
+            }
+        });
+    }
+
+    private static void readFromFile(Context context, Uri fileUri, FileType fileType, Consumer<InputStream> reader) {
+        AsyncTask.execute(() -> {
+            try (InputStream is = openInputStream(context, fileUri, fileType)) {
+                reader.accept(is);
+                showToast(context, "Import " + fileType.name() + " zakończony");
+            }
+            catch (Exception e) {
+                showToast(context, "Błąd importu: " + e.getMessage());
+                Log.e("Error import", Log.getStackTraceString(e));
+            }
+        });
     }
 
     public static Uri copyFileToInternalStorage(Context context, Uri sourceUri, String filename) {
@@ -396,7 +287,7 @@ public class FileService {
             return FileProvider.getUriForFile(context, "com.example.todolist.fileprovider", targetFile);
         }
         catch (IOException e) {
-            e.printStackTrace();
+            Log.e("IOException: ", Log.getStackTraceString(e));
             return null;
         }
     }
@@ -416,6 +307,34 @@ public class FileService {
         return result;
     }
 
+    public static String getFileNameFromFilePicker(Context context, Uri uri) {
+        String result = null;
+        if (Objects.equals(uri.getScheme(), "content")) {
+            try (Cursor cursor = context.getContentResolver().query(uri, null, null, null, null)) {
+                if (cursor != null && cursor.moveToFirst()) {
+                    int index = cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME);
+                    if (index >= 0) {
+                        result = cursor.getString(index);
+                    }
+                }
+            }
+        }
+        if (result == null) {
+            result = uri.getPath();
+            if (result != null) {
+                int cut = result.lastIndexOf('/');
+                if (cut != -1) {
+                    result = result.substring(cut + 1);
+                }
+            }
+        }
+        return result;
+    }
+
+    public static boolean isSupportedExtensionForFileType(FileType fileType, String filename) {
+        return filename != null && filename.toLowerCase().endsWith(fileType.getExtension());
+    }
+
     public static boolean deleteFileFromInternalStorage(Context context, String filePath) {
         try {
             Uri fileUri = Uri.parse(filePath);
@@ -432,7 +351,7 @@ public class FileService {
             return false;
         }
         catch (Exception e) {
-            e.printStackTrace();
+            Log.e("Exception: ", Log.getStackTraceString(e));
             return false;
         }
     }

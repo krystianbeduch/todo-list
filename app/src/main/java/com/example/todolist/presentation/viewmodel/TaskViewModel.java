@@ -20,28 +20,31 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MediatorLiveData;
 import androidx.lifecycle.MutableLiveData;
 
-import java.io.File;
 import java.util.Comparator;
 import java.util.List;
+
+import lombok.Getter;
 
 public class TaskViewModel extends AndroidViewModel {
     private final TaskRepository taskRepository;
     private final AttachmentRepository attachmentRepository;
+    @Getter
     private final MediatorLiveData<List<Task>> tasks;
+    @Getter
     private final MutableLiveData<List<Task>> tasksForNotification = new MutableLiveData<>();
     private LiveData<List<Task>> currentSource;
     private SortType currentSortType;
+    @Getter
     private final MutableLiveData<Boolean> hasInsertedDummy = new MutableLiveData<>(false);
+    @Getter
     private final MutableLiveData<Boolean> notificationChecked = new MutableLiveData<>(false);
 
     public TaskViewModel(@NonNull Application application) {
         super(application);
         taskRepository = new TaskRepository(application);
         attachmentRepository = new AttachmentRepository(application);
-
         tasks = new MediatorLiveData<>();
         currentSortType = SortType.CREATED_DATE;
-
         loadTasksBySort(SortType.CREATED_DATE);
     }
 
@@ -52,15 +55,12 @@ public class TaskViewModel extends AndroidViewModel {
             tasks.removeSource(currentSource);
         }
         currentSource = newSource;
-//        tasks.addSource(newSource, tasks::setValue);
-
         tasks.addSource(newSource, list -> {
             if (list == null) {
                 tasks.setValue(null);
                 return;
             }
-//            List<Task> sortedList = new ArrayList<>(list);
-//                sortTasks(sortedList, currentSortType);
+
             AsyncTask.execute(() -> {
                 for (Task task : list) {
                     List<Attachment> attachments = attachmentRepository.getAttachmentsByTaskId(task.getId());
@@ -71,11 +71,6 @@ public class TaskViewModel extends AndroidViewModel {
                 });
             });
         });
-    }
-
-
-    public LiveData<List<Task>> getTasks() {
-        return tasks;
     }
 
     public LiveData<Task> getTaskById(int id) {
@@ -160,20 +155,8 @@ public class TaskViewModel extends AndroidViewModel {
         tasksForNotification.setValue(tasks);
     }
 
-    public LiveData<List<Task>> getTasksForNotification() {
-        return tasksForNotification;
-    }
-
-    public LiveData<Boolean> getHasInsertedDummy() {
-        return hasInsertedDummy;
-    }
-
     public void markDummyInserted() {
         hasInsertedDummy.setValue(true);
-    }
-
-    public LiveData<Boolean> getNotificationChecked() {
-        return notificationChecked;
     }
 
     public void markNotificationChecked() {

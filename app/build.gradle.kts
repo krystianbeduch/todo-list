@@ -51,6 +51,8 @@ dependencies {
     implementation(libs.gson)
     implementation(libs.simple.xml)
 
+    compileOnly(libs.lombok)
+    annotationProcessor(libs.lombok)
 
     implementation(libs.appcompat)
     implementation(libs.material)

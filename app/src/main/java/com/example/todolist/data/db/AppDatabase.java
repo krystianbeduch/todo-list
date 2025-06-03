@@ -11,14 +11,13 @@ import com.example.todolist.data.dao.AttachmentDao;
 import com.example.todolist.data.dao.TaskDao;
 import com.example.todolist.domain.model.Attachment;
 import com.example.todolist.domain.model.Task;
-import com.example.todolist.domain.services.Converters;
+import com.example.todolist.util.converter.Converters;
 
 @Database(entities = {Task.class, Attachment.class}, version = 8)
 @TypeConverters({Converters.class})
 public abstract class AppDatabase extends RoomDatabase {
     public abstract TaskDao taskDao();
     public abstract AttachmentDao attachmentDao();
-
     private static volatile AppDatabase INSTANCE;
 
     public static AppDatabase getInstance(Context context) {

@@ -33,6 +33,13 @@ public class Task {
     @Ignore
     private NotificationType notificationType;
 
+    public static final String FIELD_ID = "id";
+    public static final String FIELD_TITLE = "title";
+    public static final String FIELD_DEADLINE = "deadline";
+    public static final String FIELD_PRIORITY = "priority";
+    public static final String FIELD_IS_DONE = "isDone";
+    public static final String FIELD_CREATED_AT = "createdAt";
+
     public Task() {
         title = "";
         priority = Priority.HIGH;
