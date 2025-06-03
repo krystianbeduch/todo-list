@@ -53,5 +53,5 @@ git clone https://github.com/krystianbeduch/todo-list.git
 
 ### 4. Run the application
 - Ensure you have a connected __emulator__ or __physical Android device__ with __debugging enabled__
-- Press __Run__ (`Shift + F10` or the green button) to launch the app
+- Press __Run__ (`Shift + F10` or the green button ▶) to launch the app
 
