@@ -1,10 +1,11 @@
 package com.example.todolist.presentation.viewmodel;
 import com.example.todolist.domain.model.Attachment;
+import com.example.todolist.domain.model.FileType;
 import com.example.todolist.domain.model.SortType;
 import com.example.todolist.domain.model.Task;
 import com.example.todolist.domain.repository.AttachmentRepository;
 import com.example.todolist.domain.repository.TaskRepository;
-import com.example.todolist.domain.services.FileService;
+import com.example.todolist.util.file.FileService;
 
 import android.app.Application;
 import android.content.Context;
@@ -12,7 +13,6 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Handler;
 import android.os.Looper;
-import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
@@ -20,7 +20,7 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MediatorLiveData;
 import androidx.lifecycle.MutableLiveData;
 
-import java.util.ArrayList;
+import java.io.File;
 import java.util.Comparator;
 import java.util.List;
 
@@ -106,20 +106,7 @@ public class TaskViewModel extends AndroidViewModel {
             taskRepository.changeStatus(task.getId(), !task.isDone());
             new Handler(Looper.getMainLooper()).post(() -> {
                 List<Task> currentTasks = tasks.getValue();
-//                if (currentTasks != null) {
-//                    List<Task> newTasks = new ArrayList<>(currentTasks);
-//                    for (Task t : newTasks) {
-//                        if (t.getId() == task.getId()) {
-//                            t.setDone(!t.isDone());
-//                            break;
-//                        }
-//                    }
-//                    Log.i("curet", currentSortType.name());
                     sortTasks(currentTasks, currentSortType);
-//                    tasks.setValue(currentTasks);
-//                }
-
-//                loadTasksBySort(currentSortType);
             });
         });
     }
@@ -193,22 +180,32 @@ public class TaskViewModel extends AndroidViewModel {
         notificationChecked.setValue(true);
     }
 
-    public void importTasksFromFile(Context context, Uri uri) {
-        FileService.importTasksFromCsv(context, uri);
+    public void importTasksFromFile(Context context, Uri uri, FileType fileType) {
+        switch (fileType) {
+            case CSV:
+                FileService.importTasksFromCsv(context, uri);
+                break;
+            case JSON:
+                FileService.importTasksFromJson(context, uri);
+                break;
+            case XML:
+                FileService.importTasksFromXml(context, uri);
+                break;
+        }
     }
 
-    public void exportTasksToFile(Context context) {
-        FileService.exportTasksToCsv(context);
+    public void exportTasksToFile(Context context, FileType fileType) {
+        switch (fileType) {
+            case CSV:
+                FileService.exportTasksToCsv(context);
+                break;
+            case JSON:
+                FileService.exportTasksToJson(context);
+                break;
+            case XML:
+                FileService.exportTasksToXml(context);
+                break;
+        }
     }
-
-    //    public void loadTasksWithAttachments() {
-//        new Thread(() -> {
-//            List<Task> taskWithAttachments = taskWithAtt.getTasksWithAttachments();
-//            new Handler(Looper.getMainLooper()).post(() -> {
-//                this.tasks.setValue(taskWithAttachments);
-//            });
-//        }).start();
-//    }
-
 }
 

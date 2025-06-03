@@ -48,6 +48,8 @@ dependencies {
     testImplementation("androidx.room:room-testing:$roomVersion")
     testImplementation("androidx.arch.core:core-testing:2.2.0")
     testImplementation("junit:junit:4.13.2")
+    implementation(libs.gson)
+    implementation(libs.simple.xml)
 
 
     implementation(libs.appcompat)

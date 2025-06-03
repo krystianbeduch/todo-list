@@ -17,7 +17,6 @@
         android:textSize="34sp"
         android:textStyle="bold" />
 
-
     <EditText
         android:id="@+id/task_title"
         android:hint="@string/task_title_hint"
@@ -58,8 +57,6 @@
             android:layout_height="wrap_content" />
 
     </LinearLayout>
-
-
 
     <Button
         android:id="@+id/task_save_button"

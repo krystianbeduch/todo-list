@@ -1,30 +1,27 @@
 package com.example.todolist;
 
 import android.Manifest;
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
+import android.provider.OpenableColumns;
+import android.util.Log;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.PopupMenu;
-import android.widget.Spinner;
 import android.widget.Toast;
 
-import com.example.todolist.domain.model.SortType;
-import com.example.todolist.domain.services.FileService;
+import com.example.todolist.domain.model.FileType;
 import com.example.todolist.presentation.viewmodel.TaskViewModel;
+import com.example.todolist.util.file.FileService;
 import com.google.android.material.badge.BadgeDrawable;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
@@ -36,17 +33,17 @@ import androidx.navigation.ui.NavigationUI;
 
 import com.example.todolist.databinding.ActivityMainBinding;
 
-import java.lang.reflect.Array;
+import java.util.Arrays;
 import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity {
 
     private ActivityMainBinding binding;
     private ActivityResultLauncher<Intent> filePickerLauncher;
+    private FileType currentImportFileType;
     private static final int NOTIFICATION_PERMISSION_CODE = 1001;
     private TaskViewModel taskViewModel;
-
-
+    
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,7 +56,7 @@ public class MainActivity extends AppCompatActivity {
 
         BottomNavigationView navView = findViewById(R.id.nav_view);
         AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(
-                R.id.navigation_home, R.id.navigation_task_manager, R.id.navigation_notifications, R.id.nav_more)
+                R.id.navigation_home, R.id.navigation_task_manager, R.id.navigation_notifications)
                 .build();
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_activity_main);
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
@@ -99,11 +96,57 @@ public class MainActivity extends AppCompatActivity {
                     if (result.getResultCode() == RESULT_OK && result.getData() != null) {
                         Uri fileUri = result.getData().getData();
                         if (fileUri != null) {
-                            taskViewModel.importTasksFromFile(this, fileUri);
+                            String fileName = getFileName(fileUri);
+                            if (fileName != null && isSupportedExtensionForCurrentFileType(fileName)) {
+                                taskViewModel.importTasksFromFile(this, fileUri, currentImportFileType);
+                            }
+                            else {
+                                Toast.makeText(this, "Błędny format pliku", Toast.LENGTH_SHORT).show();
+                            }
                         }
                     }
                 }
         );
+    }
+
+    private String getFileName(Uri uri) {
+        String result = null;
+        if (Objects.equals(uri.getScheme(), "content")) {
+            try (Cursor cursor = getContentResolver().query(uri, null, null, null, null)) {
+                if (cursor != null && cursor.moveToFirst()) {
+                    int index = cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME);
+                    if (index >= 0) {
+                        result = cursor.getString(index);
+                    }
+                }
+            }
+        }
+        if (result == null) {
+            result = uri.getPath();
+            assert result != null;
+            int cut = result.lastIndexOf('/');
+            if (cut != -1) {
+                result = result.substring(cut + 1);
+            }
+        }
+        return result;
+    }
+
+    private boolean isSupportedExtensionForCurrentFileType(String fileName) {
+        if (currentImportFileType == null) {
+            return false;
+        }
+        String lower = fileName.toLowerCase();
+        switch (currentImportFileType) {
+            case CSV:
+                return lower.endsWith(".csv");
+            case JSON:
+                return lower.endsWith(".json");
+            case XML:
+                return lower.endsWith(".xml");
+            default:
+                return false;
+        }
     }
 
 
@@ -113,10 +156,10 @@ public class MainActivity extends AppCompatActivity {
         popupMenu.setOnMenuItemClickListener(menuItem -> {
             int id = menuItem.getItemId();
             if (id == R.id.menu_import) {
-                openFilePicker();
+                showFormatChooser(true);
             }
             else if (id == R.id.menu_export) {
-                taskViewModel.exportTasksToFile(this);
+                showFormatChooser(false);
             }
             return true;
         });
@@ -124,11 +167,35 @@ public class MainActivity extends AppCompatActivity {
         popupMenu.show();
     }
 
-    private void openFilePicker() {
+    private void showFormatChooser(boolean isImport) {
+        String[] formats = Arrays.stream(FileType.values())
+                .map(Enum::name)
+                .toArray(String[]::new);
+
+        new AlertDialog.Builder(this)
+                .setTitle("Wybierz format pliku")
+                .setItems(formats, (dialog, which) -> {
+                    FileType selectedFormat = FileType.values()[which];
+                    if (isImport) {
+                        currentImportFileType = FileType.valueOf(selectedFormat.name());
+                        openFilePicker(currentImportFileType);
+                    }
+                    else {
+                        exportTasks(FileType.valueOf(selectedFormat.name()));
+                    }
+                })
+                .show();
+    }
+
+    private void openFilePicker(FileType fileType) {
         Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
-        intent.setType("text/csv");
+        intent.setType(FileService.getMimeTypeForFormat(fileType));
         intent.addCategory(Intent.CATEGORY_OPENABLE);
-        filePickerLauncher.launch(Intent.createChooser(intent, "Wybierz plik CSV"));
+        filePickerLauncher.launch(Intent.createChooser(intent, "Wybierz plik " + fileType.name()));
+    }
+
+    private void exportTasks(FileType fileType) {
+        taskViewModel.exportTasksToFile(this, fileType);
     }
 
     private void checkNotificationPermission() {
