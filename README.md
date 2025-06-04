@@ -7,7 +7,7 @@ The application is a task planner designed to help you organize your daily activ
 1. [Application functionality](#application-functionality)
 2. [Technology](#technology)
 3. [Project structure](#project-structure)
-4. [Logical database schema](#logical-database-schema)
+4. [Database schema](#database-schema)
 5. [Setup](#setup)
 6. [Functional description](#functional-description)
    - [List of tasks](#list-of-tasks)
@@ -140,8 +140,8 @@ The `res` folder contains all app resources organized into subdirectories by typ
 - `values-night` - resources for night mode themes
 - `xml` - miscellaneous XML configurations, including backup rules, file paths, and data extraction settings
 
-## Logical database schema
-![LogicalDatabaseSchema](https://github.com/krystianbeduch/todo-list/blob/main/readme-images/schema-logical.png)
+## Database schema
+![DatabaseSchema](https://github.com/krystianbeduch/todo-list/blob/main/readme-images/database-schema.png)
 
 ## Setup  
 ### 1. Configure the Android Studio environment
