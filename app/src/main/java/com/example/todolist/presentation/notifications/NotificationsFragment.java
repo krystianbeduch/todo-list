@@ -25,7 +25,7 @@ public class NotificationsFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         binding = FragmentNotificationsBinding.inflate(inflater, container, false);
-        notificationAdapter = new NotificationAdapter(new ArrayList<>());
+        notificationAdapter = new NotificationAdapter(requireContext(), new ArrayList<>());
         binding.tasksRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         binding.tasksRecyclerView.setAdapter(notificationAdapter);
 

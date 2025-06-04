@@ -41,24 +41,14 @@ public class NotificationUtils {
             }
         }
 
-        String notificationTitle;
-        if (task.getNotificationType() == NotificationType.OVERDUE) {
-            notificationTitle = "Minął termin zadania";
-        }
-        else {
-            notificationTitle = "Zbliża się termin zadania";
-        }
-
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CHANNEL_ID)
                 .setSmallIcon(R.drawable.ic_notifications_black_24dp)
-                .setContentTitle(notificationTitle)
-                .setContentText(task.getTitle() + " - termin:\n " + Converters.formatLocalDateTimeToStringWithDayName(task.getDeadline()))
+                .setContentTitle(task.getNotificationType().getTextToNotification(context))
+                .setContentText(task.getTitle() + ":\n " + Converters.formatLocalDateTimeToStringWithDayName(task.getDeadline()))
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
                 .setAutoCancel(true);
 
         NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
         notificationManager.notify(task.getId(), builder.build());
     }
-
-
 }

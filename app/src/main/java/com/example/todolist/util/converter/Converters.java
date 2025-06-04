@@ -3,6 +3,7 @@ package com.example.todolist.util.converter;
 import androidx.room.TypeConverter;
 
 import com.example.todolist.domain.model.Priority;
+import com.example.todolist.util.lang.LocalHelper;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -39,7 +40,7 @@ public class Converters {
 
     public static LocalDateTime fromStringToLocalDateTime(String dateTimeText) throws DateTimeParseException {
         if (dateTimeText == null || dateTimeText.isEmpty()) {
-            throw new DateTimeParseException("Pusty tekst daty", dateTimeText, 0);
+            throw new DateTimeParseException("Empty date text", dateTimeText, 0);
         }
         return LocalDateTime.parse(dateTimeText, formFormatter);
     }

@@ -1,5 +1,6 @@
 package com.example.todolist.presentation.notifications.adapter;
 
+import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,8 +19,10 @@ import java.util.List;
 
 public class NotificationAdapter extends BaseTaskAdapter<NotificationAdapter.NotificationTaskViewHolder> {
 
-    public NotificationAdapter(@NonNull List<Task> tasks) {
+    private final Context context;
+    public NotificationAdapter(@NonNull Context context, @NonNull List<Task> tasks) {
         super(tasks);
+        this.context = context;
     }
 
     @NonNull
@@ -34,11 +37,12 @@ public class NotificationAdapter extends BaseTaskAdapter<NotificationAdapter.Not
     public void onBindViewHolder(@NonNull NotificationTaskViewHolder holder, int position) {
         Task task = tasks.get(position);
 
-        String notificationTypeText = task.getNotificationType().getTextToNotification() +
+        String notificationTypeText = task.getNotificationType().getTextToNotification(context) +
                 Converters.formatLocalDateTimeToStringWithDayName(task.getDeadline());
 
         holder.notificationTypeView.setText(notificationTypeText);
         bindCommonTaskData(
+                holder.itemView.getContext(),
                 task,
                 holder.titleView,
                 holder.createdAtView,

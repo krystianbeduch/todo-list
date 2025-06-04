@@ -108,24 +108,13 @@ public class TaskViewModel extends AndroidViewModel {
 
 
     public void sortTasks(List<Task> tasks, SortType sortType) {
-        Comparator<Task> comparator;
-        switch (sortType) {
-            case TITLE:
-                comparator = Comparator.comparing(Task::getTitle, String.CASE_INSENSITIVE_ORDER);
-                break;
-            case DEADLINE:
-                comparator = Comparator.comparing(Task::getDeadline);
-                break;
-            case PRIORITY:
-                comparator = Comparator.comparing(Task::getPriority);
-                break;
-            case STATUS:
-                comparator = Comparator.comparing(Task::isDone);
-                break;
-            case CREATED_DATE:
-            default:
-                comparator = Comparator.comparing(Task::getCreatedAt).reversed();
-        }
+        Comparator<Task> comparator = switch (sortType) {
+            case TITLE -> Comparator.comparing(Task::getTitle, String.CASE_INSENSITIVE_ORDER);
+            case DEADLINE -> Comparator.comparing(Task::getDeadline);
+            case PRIORITY -> Comparator.comparing(Task::getPriority);
+            case STATUS -> Comparator.comparing(Task::isDone);
+            default -> Comparator.comparing(Task::getCreatedAt).reversed();
+        };
         tasks.sort(comparator);
         currentSortType = sortType;
         this.tasks.setValue(tasks);

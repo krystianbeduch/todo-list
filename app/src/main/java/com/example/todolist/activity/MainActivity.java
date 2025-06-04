@@ -2,6 +2,7 @@ package com.example.todolist.activity;
 
 import android.Manifest;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
@@ -27,6 +28,7 @@ import com.example.todolist.databinding.ActivityMainBinding;
 import com.example.todolist.domain.model.FileType;
 import com.example.todolist.presentation.viewmodel.TaskViewModel;
 import com.example.todolist.util.file.FileService;
+import com.example.todolist.util.lang.LocalHelper;
 import com.google.android.material.badge.BadgeDrawable;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
@@ -76,9 +78,6 @@ public class MainActivity extends AppCompatActivity {
                 if (moreItemView != null) {
                     showMorePopup(moreItemView);
                 }
-                else {
-                    Toast.makeText(this, "Błąd: Nie znaleziono przycisku", Toast.LENGTH_SHORT).show();
-                }
                 return true;
             }
             else {
@@ -97,12 +96,17 @@ public class MainActivity extends AppCompatActivity {
                                 taskViewModel.importTasksFromFile(this, fileUri, currentImportFileType);
                             }
                             else {
-                                Toast.makeText(this, "Błędny format pliku", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(this, getString(R.string.incorrect_file_format), Toast.LENGTH_SHORT).show();
                             }
                         }
                     }
                 }
         );
+    }
+
+    @Override
+    protected void attachBaseContext(Context newBase) {
+        super.attachBaseContext(LocalHelper.applySavedLocale(newBase));
     }
 
     private void showMorePopup(View anchor) {
@@ -116,6 +120,9 @@ public class MainActivity extends AppCompatActivity {
             else if (id == R.id.menu_export) {
                 showFormatChooser(false);
             }
+            else if (id == R.id.change_language) {
+                changeLanguage();
+            }
             return true;
         });
 
@@ -128,7 +135,7 @@ public class MainActivity extends AppCompatActivity {
                 .toArray(String[]::new);
 
         new AlertDialog.Builder(this)
-                .setTitle("Wybierz format pliku")
+                .setTitle(getString(R.string.select_file_format))
                 .setItems(formats, (dialog, which) -> {
                     FileType selectedFormat = FileType.values()[which];
                     if (isImport) {
@@ -146,7 +153,7 @@ public class MainActivity extends AppCompatActivity {
         Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
         intent.setType(fileType.getMimeType());
         intent.addCategory(Intent.CATEGORY_OPENABLE);
-        filePickerLauncher.launch(Intent.createChooser(intent, "Wybierz plik " + fileType.name()));
+        filePickerLauncher.launch(Intent.createChooser(intent, getString(R.string.select_file) + fileType.name()));
     }
 
     private void exportTasks(FileType fileType) {
@@ -163,6 +170,21 @@ public class MainActivity extends AppCompatActivity {
                         NOTIFICATION_PERMISSION_CODE);
             }
         }
+    }
+
+    private void changeLanguage() {
+        new AlertDialog.Builder(this)
+                .setTitle(getString(R.string.select_lang))
+                .setItems(new CharSequence[]{"Polski", "English"}, ((dialog, which) -> {
+                    if (which == 0) {
+                        LocalHelper.setLocale(this, "pl");
+                    }
+                    else {
+                        LocalHelper.setLocale(this, "en");
+                    }
+                    recreate();
+                }))
+                .show();
     }
 
     @Override

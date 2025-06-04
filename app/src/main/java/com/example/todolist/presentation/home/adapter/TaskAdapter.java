@@ -38,10 +38,12 @@ public class TaskAdapter extends BaseTaskAdapter<TaskAdapter.TaskViewHolder> {
     public void onBindViewHolder(@NonNull TaskAdapter.TaskViewHolder holder, int position) {
         Task task = tasks.get(position);
 
-        String deadlineText = "Termin: " + Converters.formatLocalDateTimeToStringWithDayName(task.getDeadline());
+        String deadlineText = holder.itemView.getContext().getString(R.string.deadline_prefix) +
+                " " + Converters.formatLocalDateTimeToStringWithDayName(task.getDeadline());
 
         holder.deadlineView.setText(deadlineText);
         bindCommonTaskData(
+                holder.itemView.getContext(),
                 task,
                 holder.titleView,
                 holder.createdAtView,

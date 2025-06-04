@@ -1,5 +1,6 @@
 package com.example.todolist.util.task;
 
+import android.content.Context;
 import android.graphics.Color;
 import android.view.View;
 import android.widget.ImageView;
@@ -9,6 +10,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.todolist.R;
 import com.example.todolist.domain.model.Task;
 import com.example.todolist.util.converter.Converters;
 
@@ -31,7 +33,8 @@ public abstract class BaseTaskAdapter<VH extends RecyclerView.ViewHolder> extend
         return tasks != null ? tasks.size() : 0;
     }
 
-    protected void bindCommonTaskData(@NonNull Task task,
+    protected void bindCommonTaskData(@NonNull Context context,
+                                      @NonNull Task task,
                                       @NonNull TextView titleView,
                                       @NonNull TextView createdAtView,
                                       @NonNull TextView priorityView,
@@ -40,10 +43,10 @@ public abstract class BaseTaskAdapter<VH extends RecyclerView.ViewHolder> extend
 
         titleView.setText(task.getTitle());
 
-        String createdAtText = "Utworzono: " + Converters.formatLocalDateTimeToStringWithDayName(task.getCreatedAt());
+        String createdAtText = context.getString(R.string.created_prefix) + " " + Converters.formatLocalDateTimeToStringWithDayName(task.getCreatedAt());
         createdAtView.setText(createdAtText);
 
-        String priorityText = "Priorytet: " + task.getPriority().getDisplayName();
+        String priorityText = context.getString(R.string.priority_prefix) + " " + task.getPriority().getDisplayName();
         priorityView.setText(priorityText);
         switch (task.getPriority()) {
             case HIGH:

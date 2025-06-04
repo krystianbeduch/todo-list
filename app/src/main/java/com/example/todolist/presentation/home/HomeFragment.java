@@ -150,13 +150,13 @@ public class HomeFragment extends Fragment {
             @Override
             public void onDeleteClick(Task task) {
                 new AlertDialog.Builder(getContext())
-                        .setTitle("Potwierdzenie usunięcia")
-                        .setMessage("Czy na pewno chcesz usunąć zadanie \"" + task.getTitle() + "\"?")
-                        .setPositiveButton("Tak", (dialog, which) -> {
+                        .setTitle(getString(R.string.confirm_delete_title))
+                        .setMessage(getString(R.string.confirm_delete_task_message) +  "\"" + task.getTitle() + "\"?")
+                        .setPositiveButton(getString(R.string.yes), (dialog, which) -> {
                             Log.i("Delete task", task.getId() + ". " + task.getTitle());
                             taskViewModel.delete(task);
                         })
-                        .setNegativeButton("Nie", (dialog, which) -> {
+                        .setNegativeButton(getString(R.string.no), (dialog, which) -> {
                             dialog.dismiss();
                         })
                         .show();
@@ -189,7 +189,7 @@ public class HomeFragment extends Fragment {
             @Override
             public void onDeleteAttachmentClick(Task task) {
                 if (task.getAttachments().isEmpty()) {
-                    Toast.makeText(getContext(), "Brak załączników", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(), getString(R.string.no_attachments_toast), Toast.LENGTH_SHORT).show();
                     return;
                 }
 
@@ -198,30 +198,30 @@ public class HomeFragment extends Fragment {
                         .toArray(String[]::new);
 
                 new AlertDialog.Builder(getContext())
-                        .setTitle("Usuń załącznik")
+                        .setTitle(getString(R.string.delete_attachment_alertdialog_title))
                         .setItems(attachmentsName, (dialog, which) -> {
                             Attachment selected = task.getAttachments().get(which);
 
                             new AlertDialog.Builder(getContext())
-                                    .setTitle("Potwierdzenie usunięcia")
-                                    .setMessage("Czy na pewno chcesz usunąć wybrany załącznik?")
-                                    .setPositiveButton("Tak", (dialogA, whichA) -> {
+                                    .setTitle(getString(R.string.confirm_delete_title))
+                                    .setMessage(getString(R.string.delete_attachment_alertdialog_message))
+                                    .setPositiveButton(getString(R.string.yes), (dialogA, whichA) -> {
                                         Log.i("Delete attachment", selected.getFilename());
                                         deleteAttachment(task, selected);
                                     })
-                                    .setNegativeButton("Nie", (dialogA, whichA) -> {
+                                    .setNegativeButton(getString(R.string.no), (dialogA, whichA) -> {
                                         dialog.dismiss();
                                     })
                                     .show();
                         })
-                        .setNegativeButton("Anuluj", (dialog, which) -> dialog.dismiss())
+                        .setNegativeButton(getString(R.string.cancel), (dialog, which) -> dialog.dismiss())
                         .show();
             }
 
             @Override
             public void onShowAttachmentClick(Task task) {
                 if (task.getAttachments().isEmpty()) {
-                    Toast.makeText(getContext(), "Brak załączników", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(), getString(R.string.no_attachments_toast), Toast.LENGTH_SHORT).show();
                     return;
                 }
 
@@ -230,12 +230,12 @@ public class HomeFragment extends Fragment {
                         .toArray(String[]::new);
 
                 new AlertDialog.Builder(getContext())
-                        .setTitle("Wybierz załącznik")
+                        .setTitle(getString(R.string.select_attachment))
                         .setItems(attachmentsName, (dialog, which) -> {
                             Attachment selected = task.getAttachments().get(which);
                             openAttachment(requireContext(), selected);
                         })
-                        .setNegativeButton("Anuluj", (dialog, which) -> dialog.dismiss())
+                        .setNegativeButton(getString(R.string.cancel), (dialog, which) -> dialog.dismiss())
                         .show();
             }
         });
@@ -264,7 +264,7 @@ public class HomeFragment extends Fragment {
                                     localUri.toString()
                             );
                             taskViewModel.addAttachmentToTask(attachment);
-                            Toast.makeText(getContext(), "Dodano załącznik", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getContext(), getString(R.string.attachment_added), Toast.LENGTH_SHORT).show();
                         }
                     }
                 }
@@ -298,7 +298,7 @@ public class HomeFragment extends Fragment {
             context.startActivity(intent);
         }
         catch (ActivityNotFoundException e) {
-            Toast.makeText(context, "Brak aplikacji do otwarcia pliku", Toast.LENGTH_SHORT).show();
+            Toast.makeText(context, context.getString(R.string.no_app_to_open_file), Toast.LENGTH_SHORT).show();
         }
         catch (Exception e) {
             Log.e("Open attachment error", Log.getStackTraceString(e));
@@ -309,10 +309,10 @@ public class HomeFragment extends Fragment {
         if (FileService.deleteFileFromInternalStorage(requireContext(), attachment.getFilePath())) {
             taskViewModel.deleteAttachment(attachment);
             task.getAttachments().removeIf(a -> a.getId() == attachment.getId());
-            Toast.makeText(getContext(), "Usunięto załącznik", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), getString(R.string.attachment_deleted), Toast.LENGTH_SHORT).show();
         }
         else {
-            Toast.makeText(getContext(), "Błąd usuwania załącznika", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), getString(R.string.error_deleting_attachment), Toast.LENGTH_SHORT).show();
         }
     }
 

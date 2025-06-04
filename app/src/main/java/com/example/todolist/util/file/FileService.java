@@ -369,7 +369,7 @@ public class FileService {
 
     private static void showToast(Context context, String message) {
         new Handler(Looper.getMainLooper()).post(() ->
-            Toast.makeText(context, message, Toast.LENGTH_LONG).show()
+                Toast.makeText(context, message, Toast.LENGTH_LONG).show()
         );
     }
 }
