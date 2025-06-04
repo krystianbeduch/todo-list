@@ -1,4 +1,5 @@
 package com.example.todolist.presentation.viewmodel;
+
 import com.example.todolist.domain.model.Attachment;
 import com.example.todolist.domain.model.enums.FileType;
 import com.example.todolist.domain.model.enums.SortType;
@@ -106,7 +107,6 @@ public class TaskViewModel extends AndroidViewModel {
         });
     }
 
-
     public void sortTasks(List<Task> tasks, SortType sortType) {
         Comparator<Task> comparator = switch (sortType) {
             case TITLE -> Comparator.comparing(Task::getTitle, String.CASE_INSENSITIVE_ORDER);
@@ -180,4 +180,3 @@ public class TaskViewModel extends AndroidViewModel {
         }
     }
 }
-

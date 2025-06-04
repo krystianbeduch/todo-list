@@ -13,7 +13,7 @@ import com.example.todolist.domain.model.Attachment;
 import com.example.todolist.domain.model.Task;
 import com.example.todolist.util.converter.Converters;
 
-@Database(entities = {Task.class, Attachment.class}, version = 9)
+@Database(entities = {Task.class, Attachment.class}, version = 10)
 @TypeConverters({Converters.class})
 public abstract class AppDatabase extends RoomDatabase {
     public abstract TaskDao taskDao();

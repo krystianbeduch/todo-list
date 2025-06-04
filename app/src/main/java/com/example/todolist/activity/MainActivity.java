@@ -173,17 +173,6 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-//    private void changeLanguageDialog() {
-//        new AlertDialog.Builder(this)
-//                .setTitle(getString(R.string.select_lang))
-//                .setItems(new CharSequence[]{"Polski", "English"}, ((dialog, which) -> {
-//                    String selectedLanguage = which == 0 ? "pl" : "en";
-//                    LocalHelper.changeLanguage(this, selectedLanguage);
-//                }))
-//                .setNegativeButton(getString(R.string.cancel), (dialog, which) -> dialog.dismiss())
-//                .show();
-//    }
-
     @Override
     public void onDestroy() {
         super.onDestroy();

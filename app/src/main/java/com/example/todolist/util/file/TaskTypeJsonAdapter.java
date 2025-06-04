@@ -11,11 +11,6 @@ import com.example.todolist.util.converter.Converters;
 import java.io.IOException;
 
 public class TaskTypeJsonAdapter extends TypeAdapter<Task> {
-//    private final Context context;
-//
-//    public TaskTypeJsonAdapter(Context context) {
-//        this.context = context.getApplicationContext();
-//    }
 
     @Override
     public void write(JsonWriter out, Task task) throws IOException {

@@ -33,7 +33,7 @@ public class TaskDaoTest {
     public void createDb() {
         Context context = ApplicationProvider.getApplicationContext();
         database = Room.inMemoryDatabaseBuilder(context, AppDatabase.class) // baza na czas testow
-                .allowMainThreadQueries() // w testach mozemy uzywac zapytac na main thread
+                .allowMainThreadQueries() // w testach mozemy uzywac na main thread
                 .build();
         taskDao = database.taskDao();
     }

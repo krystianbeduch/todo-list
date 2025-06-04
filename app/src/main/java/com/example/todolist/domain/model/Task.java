@@ -19,6 +19,7 @@ public class Task {
 
     @NonNull
     private String title;
+    @NonNull
     private LocalDateTime deadline;
     @ColumnInfo(name = "is_done")
     private boolean isDone;
@@ -48,9 +49,10 @@ public class Task {
         title = "";
         priority = Priority.HIGH;
         createdAt = LocalDateTime.now();
+        deadline = LocalDateTime.now().plusHours(24);
     }
 
-    public Task(@NonNull String title, LocalDateTime deadline, boolean isDone, @NonNull Priority priority, @NonNull LocalDateTime createdAt) {
+    public Task(@NonNull String title, @NonNull LocalDateTime deadline, boolean isDone, @NonNull Priority priority, @NonNull LocalDateTime createdAt) {
         this.title = title;
         this.deadline = deadline;
         this.isDone = isDone;
@@ -76,11 +78,12 @@ public class Task {
         this.title = title;
     }
 
+    @NonNull
     public LocalDateTime getDeadline() {
         return deadline;
     }
 
-    public void setDeadline(LocalDateTime deadline) {
+    public void setDeadline(@NonNull LocalDateTime deadline) {
         this.deadline = deadline;
     }
 
