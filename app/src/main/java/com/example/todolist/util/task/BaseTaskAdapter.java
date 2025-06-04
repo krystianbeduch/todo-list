@@ -43,10 +43,10 @@ public abstract class BaseTaskAdapter<VH extends RecyclerView.ViewHolder> extend
 
         titleView.setText(task.getTitle());
 
-        String createdAtText = context.getString(R.string.created_prefix) + " " + Converters.formatLocalDateTimeToStringWithDayName(task.getCreatedAt());
+        String createdAtText = context.getString(R.string.created_prefix) + " " + Converters.formatLocalDateTimeToStringWithDayName(context, task.getCreatedAt());
         createdAtView.setText(createdAtText);
 
-        String priorityText = context.getString(R.string.priority_prefix) + " " + task.getPriority().getDisplayName();
+        String priorityText = context.getString(R.string.priority_prefix) + " " + context.getString(task.getPriority().getStringResId());
         priorityView.setText(priorityText);
         switch (task.getPriority()) {
             case HIGH:

@@ -39,7 +39,7 @@ public class TaskAdapter extends BaseTaskAdapter<TaskAdapter.TaskViewHolder> {
         Task task = tasks.get(position);
 
         String deadlineText = holder.itemView.getContext().getString(R.string.deadline_prefix) +
-                " " + Converters.formatLocalDateTimeToStringWithDayName(task.getDeadline());
+                " " + Converters.formatLocalDateTimeToStringWithDayName(holder.itemView.getContext(), task.getDeadline());
 
         holder.deadlineView.setText(deadlineText);
         bindCommonTaskData(

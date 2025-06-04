@@ -16,6 +16,7 @@ import android.widget.Toast;
 
 import androidx.core.content.FileProvider;
 
+import com.example.todolist.R;
 import com.example.todolist.data.db.AppDatabase;
 import com.example.todolist.domain.model.FileType;
 import com.example.todolist.domain.model.Priority;
@@ -52,20 +53,20 @@ public class FileService {
                 List<Task> allTasks = db.taskDao().getAllSync();
 
                 StringBuilder csvBuilder = new StringBuilder();
-                csvBuilder.append("ID;Tytuł;Termin;Priorytet;Status;Data dodania\n");
+                csvBuilder.append(context.getString(R.string.csv_header)).append("\n");
 
                 for (Task task : allTasks) {
                     csvBuilder.append(task.getId()).append(";");
                     csvBuilder.append(sanitize(task.getTitle())).append(";");
                     csvBuilder.append(Converters.fromLocalDateTimeToString(task.getDeadline())).append(";");
-                    csvBuilder.append(task.getPriority().getDisplayName()).append(";");
-                    csvBuilder.append(task.isDone() ? 1 : 0).append(";");
+                    csvBuilder.append(task.getPriority()).append(";");
+                    csvBuilder.append(task.isDone()).append(";");
                     csvBuilder.append(Converters.fromLocalDateTimeToString(task.getCreatedAt())).append("\n");
                 }
                 outputStream.write(csvBuilder.toString().getBytes(StandardCharsets.UTF_8));
             }
             catch (Exception e) {
-                showToast(context, "Błąd eksportu CSV: " + e.getMessage());
+                showToast(context, context.getString(R.string.error_export_csv) + " " + e.getMessage());
                 Log.e("Error CSV export" , Log.getStackTraceString(e));
             }
         });
@@ -91,14 +92,14 @@ public class FileService {
                     Task task = new Task();
                     task.setTitle(fields[1]);
                     task.setDeadline(Converters.fromStringToLocalDateTime(fields[2]));
-                    task.setPriority(Priority.fromDisplayName(fields[3]));
-                    task.setDone(fields[4].equals("1"));
+                    task.setPriority(Priority.valueOf(fields[3]));
+                    task.setDone(Boolean.parseBoolean(fields[4]));
                     task.setCreatedAt(Converters.fromStringToLocalDateTime(fields[5]));
                     db.taskDao().insert(task);
                 }
             }
             catch (Exception e) {
-                showToast(context, "Błąd importu CSV: " + e.getMessage());
+                showToast(context, context.getString(R.string.error_import_csv) + " " + e.getMessage());
                 Log.e("Error CSV import" , Log.getStackTraceString(e));
             }
         });
@@ -120,7 +121,7 @@ public class FileService {
                 outputStream.write(json.getBytes(StandardCharsets.UTF_8));
             }
             catch (Exception e) {
-                showToast(context, "Błąd eksportu JSON: " + e.getMessage());
+                showToast(context, context.getString(R.string.error_export_json) + " " + e.getMessage());
                 Log.e("Error JSON export" , Log.getStackTraceString(e));
             }
         });
@@ -142,7 +143,7 @@ public class FileService {
                 }
             }
             catch (Exception e) {
-                showToast(context, "Błąd importu JSON: " + e.getMessage());
+                showToast(context, context.getString(R.string.error_import_json) + " " + e.getMessage());
                 Log.e("Error JSON import" , Log.getStackTraceString(e));
             }
         });
@@ -163,7 +164,7 @@ public class FileService {
                 serializer.write(wrapper, outputStream);
             }
             catch (Exception e) {
-                showToast(context, "Błąd eksportu XML: " + e.getMessage());
+                showToast(context, context.getString(R.string.error_export_xml) + " " + e.getMessage());
                 Log.e("Error XML export" , Log.getStackTraceString(e));
             }
         });
@@ -175,8 +176,7 @@ public class FileService {
                 Serializer serializer = new Persister();
                 TaskXmlWrapper wrapper = serializer.read(TaskXmlWrapper.class, inputStream);
 
-                List<Task> tasks = wrapper.getTaskXmlList()
-                        .stream()
+                List<Task> tasks = wrapper.getTaskXmlList().stream()
                         .map(TaskXml::toTask)
                         .collect(Collectors.toList());
 
@@ -186,7 +186,7 @@ public class FileService {
                 }
             }
             catch (Exception e) {
-                showToast(context, "Błąd importu JSON: " + e.getMessage());
+                showToast(context, context.getString(R.string.error_import_xml) + " " + e.getMessage());
                 Log.e("Error JSON import" , Log.getStackTraceString(e));
             }
         });
@@ -205,7 +205,7 @@ public class FileService {
             Uri uri = MediaStore.Downloads.EXTERNAL_CONTENT_URI;
             fileUri = context.getContentResolver().insert(uri, values);
             if (fileUri == null) {
-                throw new IOException("Nie można utworzyć pliku " + fileType.name());
+                throw new IOException("Cannot create file " + fileType.name());
             }
             outputStream = context.getContentResolver().openOutputStream(fileUri);
         }
@@ -217,7 +217,7 @@ public class FileService {
         }
 
         if (outputStream == null) {
-            throw new IOException("Nie można otworzyć strumienia do zapisu " + fileType.name());
+            throw new IOException("Unable to open stream for writing " + fileType.name());
         }
         return outputStream;
     }
@@ -225,7 +225,7 @@ public class FileService {
     private static InputStream openInputStream(Context context, Uri fileUri, FileType fileType) throws IOException {
         InputStream inputStream = context.getContentResolver().openInputStream(fileUri);
         if (inputStream == null) {
-            throw new IOException("Nie udało się otworzyć pliku " + fileType.name());
+            throw new IOException("Failed to open file " + fileType.name());
         }
         return inputStream;
     }
@@ -235,10 +235,10 @@ public class FileService {
         AsyncTask.execute(() -> {
             try (OutputStream os = openOutputStream(context, filename, fileType)) {
                 writer.accept(os);
-                showToast(context, "Wyeksportowano " + fileType.name());
+                showToast(context, context.getString(R.string.exported) + " " + fileType.name());
             }
             catch (Exception e) {
-                showToast(context, "Błąd eksportu " + fileType.name() + ": " + e.getMessage());
+                showToast(context, context.getString(R.string.export_error) + " " + fileType.name() + ": " + e.getMessage());
                 Log.e("Error export" + fileType.name(), Log.getStackTraceString(e));
             }
         });
@@ -248,10 +248,10 @@ public class FileService {
         AsyncTask.execute(() -> {
             try (InputStream is = openInputStream(context, fileUri, fileType)) {
                 reader.accept(is);
-                showToast(context, "Import " + fileType.name() + " zakończony");
+                showToast(context, "Import " + fileType.name());
             }
             catch (Exception e) {
-                showToast(context, "Błąd importu: " + e.getMessage());
+                showToast(context, context.getString(R.string.import_error) + " " + e.getMessage());
                 Log.e("Error import", Log.getStackTraceString(e));
             }
         });
@@ -275,7 +275,7 @@ public class FileService {
              OutputStream outputStream = new FileOutputStream(targetFile)) {
 
             if (inputStream == null) {
-                throw new IOException("Nie można odtworzyć InputStream z URI");
+                throw new IOException(context.getString(R.string.is_cannot_reconstructed));
             }
 
             byte[] buffer = new byte[8192];

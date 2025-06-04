@@ -1,18 +1,24 @@
 package com.example.todolist.domain.model;
 
+import android.content.Context;
+
+import androidx.annotation.StringRes;
+
+import com.example.todolist.R;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
 public enum Priority {
-    HIGH(0, "Wysoki"),
-    MEDIUM(1, "Średni"),
-    LOW(2, "Niski");
-
+    HIGH(0, R.string.high_priority),
+    MEDIUM(1, R.string.medium_priority),
+    LOW(2, R.string.low_priority);
 
     private final int value;
-    private final String displayName;
+    @StringRes
+    private final int stringResId;
 
     public static Priority fromInt(int value) {
         for (Priority p : values()) {
@@ -23,9 +29,9 @@ public enum Priority {
         throw new IllegalArgumentException("Unknown priority: " + value);
     }
 
-    public static Priority fromDisplayName(String displayName) {
+    public static Priority fromDisplayName(Context context, String displayName) {
         for (Priority p : values()) {
-            if (p.getDisplayName().equals(displayName)) {
+            if (context.getString(p.getStringResId()).equals(displayName)) {
                 return p;
             }
         }
@@ -33,11 +39,6 @@ public enum Priority {
     }
 
     public static int getPriorityIndex(Priority priority) {
-        for (Priority p : values()) {
-            if (p.getDisplayName().equals(priority.getDisplayName())) {
-                return p.getValue();
-            }
-        }
-        return 0;
+        return priority.getValue();
     }
 }

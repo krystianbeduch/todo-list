@@ -26,7 +26,6 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeParseException;
 import java.util.Calendar;
 import java.util.Locale;
-import java.util.Objects;
 
 import lombok.Getter;
 
@@ -66,14 +65,20 @@ public class TaskFormHelper {
             @Override
             public View getView(int position, View convertView, @NonNull ViewGroup parent) {
                 View view = super.getView(position, convertView, parent);
-                ((TextView) view).setText(Objects.requireNonNull(getItem(position)).getDisplayName());
+                Priority item = getItem(position);
+                if (item != null) {
+                    ((TextView) view).setText(context.getString(item.getStringResId()));
+                }
                 return view;
             }
 
             @Override
             public View getDropDownView(int position, View convertView, @NonNull ViewGroup parent) {
                 View view = super.getDropDownView(position, convertView, parent);
-                ((TextView) view).setText(Objects.requireNonNull(getItem(position)).getDisplayName());
+                Priority item = getItem(position);
+                if (item != null) {
+                    ((TextView) view).setText(context.getString(item.getStringResId()));
+                }
                 return view;
             }
         };

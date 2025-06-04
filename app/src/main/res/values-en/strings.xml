@@ -46,6 +46,13 @@
     <string name="medium_priority">Medium</string>
     <string name="low_priority">Low</string>
 
+    <!-- SortType -->
+    <string name="sort_created_at">Addition date</string>
+    <string name="sort_title">Title</string>
+    <string name="sort_deadline">Deadline</string>
+    <string name="sort_priority">Priority</string>
+    <string name="sort_status">Status</string>
+
     <!-- TaskAdapter -->
     <string name="deadline_prefix">Deadline:</string>
 
@@ -74,4 +81,17 @@
     <string name="incorrect_date">The date must be in the future</string>
     <string name="task_updated">Task updated</string>
     <string name="task_added">Task added</string>
+
+    <!-- FileService -->
+    <string name="csv_header">ID;Title;Deadline;Priority;Status;Created at</string>
+    <string name="error_export_csv">Error CSV export</string>
+    <string name="error_import_csv">Error CSV import</string>
+    <string name="error_export_json">Error JSON export</string>
+    <string name="error_import_json">Error JSON import</string>
+    <string name="error_export_xml">Error XML export</string>
+    <string name="error_import_xml">Error XML import</string>
+    <string name="exported">Exported</string>
+    <string name="export_error">Export error</string>
+    <string name="import_error">Import error</string>
+    <string name="is_cannot_reconstructed">InputStream cannot be reconstructed from URI</string>
 </resources>

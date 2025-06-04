@@ -1,5 +1,7 @@
 package com.example.todolist.util.file.xml;
 
+import android.content.Context;
+
 import com.example.todolist.domain.model.Priority;
 import com.example.todolist.domain.model.Task;
 import com.example.todolist.util.converter.Converters;
@@ -23,7 +25,7 @@ public class TaskXml {
     @Element
     private String deadline;
     @Element
-    private String priority;
+    private Priority priority;
     @Element
     private boolean isDone;
     @Element
@@ -33,7 +35,7 @@ public class TaskXml {
         this.id = task.getId();
         this.title = task.getTitle();
         this.deadline = Converters.fromLocalDateTimeToString(task.getDeadline());
-        this.priority = task.getPriority().getDisplayName();
+        this.priority = task.getPriority();
         this.isDone = task.isDone();
         this.createdAt = Converters.fromLocalDateTimeToString(task.getCreatedAt());
     }
@@ -42,7 +44,7 @@ public class TaskXml {
         Task task = new Task();
         task.setTitle(this.title);
         task.setDeadline(Converters.fromStringToLocalDateTime(this.deadline));
-        task.setPriority(Priority.fromDisplayName(this.priority));
+        task.setPriority(this.priority);
         task.setDone(this.isDone);
         task.setCreatedAt(Converters.fromStringToLocalDateTime(this.createdAt));
         return task;

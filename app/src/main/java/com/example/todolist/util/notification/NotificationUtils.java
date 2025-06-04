@@ -44,7 +44,7 @@ public class NotificationUtils {
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CHANNEL_ID)
                 .setSmallIcon(R.drawable.ic_notifications_black_24dp)
                 .setContentTitle(task.getNotificationType().getTextToNotification(context))
-                .setContentText(task.getTitle() + ":\n " + Converters.formatLocalDateTimeToStringWithDayName(task.getDeadline()))
+                .setContentText(task.getTitle() + ":\n " + Converters.formatLocalDateTimeToStringWithDayName(context, task.getDeadline()))
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
                 .setAutoCancel(true);
 

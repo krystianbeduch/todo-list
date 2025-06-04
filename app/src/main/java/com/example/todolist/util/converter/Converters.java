@@ -1,5 +1,7 @@
 package com.example.todolist.util.converter;
 
+import android.content.Context;
+
 import androidx.room.TypeConverter;
 
 import com.example.todolist.domain.model.Priority;
@@ -8,10 +10,11 @@ import com.example.todolist.util.lang.LocalHelper;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
+import java.util.Date;
+import java.util.Locale;
 
 public class Converters {
     private static final DateTimeFormatter formatter = DateTimeFormatter.ISO_LOCAL_DATE_TIME;
-    private static final DateTimeFormatter formatterWithDayName = DateTimeFormatter.ofPattern("EEEE, dd.MM.yyyy HH:mm");
     private static final DateTimeFormatter formFormatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
 
     @TypeConverter
@@ -34,8 +37,14 @@ public class Converters {
         return value == null ? null : Priority.fromInt(value);
     }
 
-    public static String formatLocalDateTimeToStringWithDayName(LocalDateTime dateTime) {
-        return dateTime == null ? null : dateTime.format(formatterWithDayName);
+    public static String formatLocalDateTimeToStringWithDayName(Context context, LocalDateTime dateTime) {
+        return dateTime == null ? null : dateTime.format(getFormatterWithDayName(context));
+    }
+
+    private static DateTimeFormatter getFormatterWithDayName(Context context) {
+        String languageCode = LocalHelper.getSavedLanguage(context);
+        Locale locale = new Locale(languageCode);
+        return DateTimeFormatter.ofPattern("EEEE, dd.MM.yyyy HH:mm", locale);
     }
 
     public static LocalDateTime fromStringToLocalDateTime(String dateTimeText) throws DateTimeParseException {

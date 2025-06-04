@@ -39,6 +39,7 @@ import com.example.todolist.domain.model.Task;
 import com.example.todolist.presentation.home.adapter.TaskAdapter;
 import com.example.todolist.presentation.viewmodel.TaskViewModel;
 import com.example.todolist.util.file.FileService;
+import com.example.todolist.util.lang.LocalHelper;
 import com.example.todolist.util.notification.NotificationUtils;
 
 import java.time.LocalDateTime;
@@ -46,6 +47,7 @@ import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 import java.util.stream.Collectors;
 
 public class HomeFragment extends Fragment {
@@ -103,7 +105,7 @@ public class HomeFragment extends Fragment {
                 Spinner spinner = (Spinner) item.getActionView();
                 if (spinner != null) {
                     List<String> sortDisplayNames = Arrays.stream(SortType.values())
-                            .map(SortType::getDisplayName)
+                            .map(type -> getString(type.getStringResId()))
                             .collect(Collectors.toList());
                     ArrayAdapter<String> adapter = new ArrayAdapter<>(
                             requireContext(),
@@ -116,7 +118,7 @@ public class HomeFragment extends Fragment {
                         @Override
                         public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                             String selectedName = (String) parent.getItemAtPosition(position);
-                            SortType selected = SortType.fromDisplayName(selectedName);
+                            SortType selected = SortType.fromDisplayName(getContext(), selectedName);
                             List<Task> currentTasks = taskViewModel.getTasks().getValue();
                             if (currentTasks != null) {
                                 taskViewModel.sortTasks(new ArrayList<>(currentTasks), selected);
@@ -126,10 +128,23 @@ public class HomeFragment extends Fragment {
                         public void onNothingSelected(AdapterView<?> parent) {}
                     });
                 }
+
+                MenuItem langItem = menu.findItem(R.id.current_lang_flag);
+                String lang = Locale.getDefault().getLanguage();
+                if (lang.equals("pl")) {
+                    langItem.setIcon(R.drawable.ic_polish);
+                }
+                else if (lang.equals("en")) {
+                    langItem.setIcon(R.drawable.ic_english);
+                }
             }
 
             @Override
             public boolean onMenuItemSelected(@NonNull MenuItem menuItem) {
+                if (menuItem.getItemId() == R.id.current_lang_flag) {
+                    LocalHelper.showChangeLanguageDialog(requireContext());
+                    return true;
+                }
                 return false;
             }
         }, getViewLifecycleOwner());

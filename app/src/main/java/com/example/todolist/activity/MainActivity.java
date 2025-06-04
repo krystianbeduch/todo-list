@@ -11,9 +11,11 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.PopupMenu;
 import android.widget.Toast;
+import android.widget.Toolbar;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
@@ -121,7 +123,7 @@ public class MainActivity extends AppCompatActivity {
                 showFormatChooser(false);
             }
             else if (id == R.id.change_language) {
-                changeLanguage();
+                LocalHelper.showChangeLanguageDialog(this);
             }
             return true;
         });
@@ -146,6 +148,7 @@ public class MainActivity extends AppCompatActivity {
                         exportTasks(FileType.valueOf(selectedFormat.name()));
                     }
                 })
+                .setNegativeButton(getString(R.string.cancel), (dialog, which) -> dialog.dismiss())
                 .show();
     }
 
@@ -172,20 +175,16 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void changeLanguage() {
-        new AlertDialog.Builder(this)
-                .setTitle(getString(R.string.select_lang))
-                .setItems(new CharSequence[]{"Polski", "English"}, ((dialog, which) -> {
-                    if (which == 0) {
-                        LocalHelper.setLocale(this, "pl");
-                    }
-                    else {
-                        LocalHelper.setLocale(this, "en");
-                    }
-                    recreate();
-                }))
-                .show();
-    }
+//    private void changeLanguageDialog() {
+//        new AlertDialog.Builder(this)
+//                .setTitle(getString(R.string.select_lang))
+//                .setItems(new CharSequence[]{"Polski", "English"}, ((dialog, which) -> {
+//                    String selectedLanguage = which == 0 ? "pl" : "en";
+//                    LocalHelper.changeLanguage(this, selectedLanguage);
+//                }))
+//                .setNegativeButton(getString(R.string.cancel), (dialog, which) -> dialog.dismiss())
+//                .show();
+//    }
 
     @Override
     public void onDestroy() {

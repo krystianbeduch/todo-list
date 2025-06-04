@@ -46,6 +46,13 @@
     <string name="medium_priority">Średni</string>
     <string name="low_priority">Niski</string>
 
+    <!-- SortType -->
+    <string name="sort_created_at">Data dodania</string>
+    <string name="sort_title">Tytuł</string>
+    <string name="sort_deadline">Termin</string>
+    <string name="sort_priority">Priorytet</string>
+    <string name="sort_status">Status</string>
+
     <!-- TaskAdapter -->
     <string name="deadline_prefix">Termin:</string>
 
@@ -75,6 +82,18 @@
     <string name="task_updated">Zadanie zaktualizowane</string>
     <string name="task_added">Zadanie dodanie</string>
 
+    <!-- FileService -->
+    <string name="csv_header">ID;Tytuł;Termin;Priorytet;Status;Data dodania</string>
+    <string name="error_export_csv">Błąd eksportu CSV</string>
+    <string name="error_import_csv">Błąd importu CSV</string>
+    <string name="error_export_json">Błąd eksportu JSON</string>
+    <string name="error_import_json">Błąd importu JSON</string>
+    <string name="error_export_xml">Błąd eksportu XML</string>
+    <string name="error_import_xml">Błąd importu XML</string>
+    <string name="exported">Wyeksportowano</string>
+    <string name="export_error">Błąd exportu</string>
+    <string name="import_error">Błąd importu</string>
+    <string name="is_cannot_reconstructed">Nie można odtworzyć InputStream z URI</string>
 
 
 
