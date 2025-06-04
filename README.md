@@ -1,13 +1,14 @@
 # To-Do List
 The project was developed as part of my IT studies during a course on mobile application design.
 
-The application is a task planner designed to help you organize your daily activities. You can assign priorities to tasks, set deadlines, mark tasks as completed, and attach files. A notification mechanism reminds you of upcoming deadlines and alerts you to tasks you have not completed on time.
+The application is a task planner designed to help you organize your daily activities. You can assign priorities to tasks, set deadlines, mark tasks as completed, and attach files. A notification mechanism reminds you of upcoming deadlines and alerts you to tasks you have not completed on time. Application designed based on Model-View-ViewModel (MVVC) design pattern.
 
 ### Contents
 1. [Application functionality](#application-functionality)
 2. [Technology](#technology)
-3. [Setup](#setup)
-4. [Functional description](#functional-description)
+3. [Project structure](#project-structure)
+4. [Setup](#setup)
+5. [Functional description](#functional-description)
    - [List of tasks](#list-of-tasks)
    - [Adding a new task](#adding-a-new-task)
    - [Editing a task from the list](#editing-a-task-from-the-list)
@@ -15,6 +16,7 @@ The application is a task planner designed to help you organize your daily activ
    - [Managing attachments](#managing-attachments)
    - [Notification mechanism](#notification-mechanism)
    - [Import and export of task list to files](#import-and-export-of-task-list-to-files)
+   - [Changing the application language](#changing-the-application-language)
 
 ## Application functionality
 - Displays all saved tasks in a clear list, allowing easy browsing and access to task details
@@ -24,6 +26,7 @@ The application is a task planner designed to help you organize your daily activ
 - User can add attachments (eg. images, videos or PDF documents) to tasks, view them or delete them as needed
 - A notification mechanism sends reminders about upcoming deadlines and alerts the user when a task is overdue
 - Import and export task list to files allows you to save the task list to a file or upload new tasks, supporting CSV, JSON and XML file formats
+- USer can change the language of the application at any time: Polish and English
 
 ## Technology
 - Android SDK 35 (min. SDK 27)
@@ -55,3 +58,8 @@ git clone https://github.com/krystianbeduch/todo-list.git
 - Ensure you have a connected __emulator__ or __physical Android device__ with __debugging enabled__
 - Press __Run__ (`Shift + F10` or the green button <img src="https://github.com/krystianbeduch/todo-list/blob/main/readme-images/green-play-button.png" alt="Green button" title="Green button" height="20"> to launch the app
 
+## Setup 
+Functional description
+
+<!-- TREEVIEW START -->
+<!-- TREEVIEW END -->
