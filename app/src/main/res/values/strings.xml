@@ -24,6 +24,8 @@
     <string name="menu_import_tasks">Importuj zadania</string>
     <string name="menu_export_tasks">Eksportuj zadania</string>
     <string name="menu_change_lang">Zmień język</string>
+    <string name="menu_item_lang">Język</string>
+    <string name="menu_item_sort">Sortuj</string>
 
     <!-- Code -->
     <!-- MainActivity -->
@@ -94,11 +96,4 @@
     <string name="export_error">Błąd exportu</string>
     <string name="import_error">Błąd importu</string>
     <string name="is_cannot_reconstructed">Nie można odtworzyć InputStream z URI</string>
-
-
-
-
-
-
-
 </resources>

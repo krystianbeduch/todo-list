@@ -4,15 +4,13 @@
 
     <item
         android:id="@+id/current_lang_flag"
-        android:title="Język"
+        android:title="@string/menu_item_lang"
         android:icon="@drawable/ic_polish"
         app:showAsAction="ifRoom"/>
 
     <item
         android:id="@+id/sort_spinner_item"
-        android:title="Sortuj"
+        android:title="@string/menu_item_sort"
         app:actionViewClass="android.widget.Spinner"
         app:showAsAction="always" />
-
-
 </menu>

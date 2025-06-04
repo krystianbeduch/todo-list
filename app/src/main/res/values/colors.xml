@@ -1,28 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-<!--    <color name="purple_200">#FFBB86FC</color>-->
-<!--    <color name="purple_500">#FF6200EE</color>-->
-<!--    <color name="purple_700">#FF3700B3</color>-->
-<!--    <color name="teal_200">#FF03DAC5</color>-->
-<!--    <color name="teal_700">#FF018786</color>-->
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
 
-<!--    <color name="color_primary">#EE3C16</color> &lt;!&ndash; główny kolor: intensywny czerwono-pomarańczowy &ndash;&gt;-->
-<!--    <color name="color_primary_variant">#C23313</color> &lt;!&ndash; ciemniejszy wariant &ndash;&gt;-->
-<!--    <color name="color_on_primary">#FFFFFF</color> &lt;!&ndash; tekst na kolorze primary &ndash;&gt;-->
+    <color name="color_primary">#E53935</color>
+    <color name="color_primary_variant">#B71C1C</color>
+    <color name="color_on_primary">#FFFFFF</color>
 
-<!--    <color name="color_secondary">#FF7043</color> &lt;!&ndash; lekko kontrastowy, ale zbliżony (pomarańczowy) &ndash;&gt;-->
-<!--    <color name="color_secondary_variant">#E64A19</color> &lt;!&ndash; ciemniejszy wariant secondary &ndash;&gt;-->
-<!--    <color name="color_on_secondary">#FFFFFF</color> &lt;!&ndash; tekst na kolorze secondary &ndash;&gt;-->
-
-    <!-- Primary: mocna czerwień -->
-    <color name="color_primary">#E53935</color> <!-- jasna, ale bardziej stonowana niż #EE3C16 -->
-    <color name="color_primary_variant">#B71C1C</color> <!-- ciemniejszy czerwony -->
-    <color name="color_on_primary">#FFFFFF</color> <!-- biały tekst na czerwonym tle -->
-
-    <!-- Secondary: intensywny pomarańcz -->
-    <color name="color_secondary">#FB8C00</color> <!-- pomarańczowy, ciepły i żywy -->
-    <color name="color_secondary_variant">#EF6C00</color> <!-- ciemniejszy pomarańcz -->
-    <color name="color_on_secondary">#FFFFFF</color> <!-- biały tekst na tle secondary -->
+    <color name="color_secondary">#FB8C00</color>
+    <color name="color_secondary_variant">#EF6C00</color>
+    <color name="color_on_secondary">#FFFFFF</color>
 </resources>
