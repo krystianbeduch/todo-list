@@ -37,6 +37,95 @@ The application is a task planner designed to help you organize your daily activ
 - Lombok 1.18.38
 - Gradle Plugin AGP 8.8.2 (Kotlin)
 
+## Project structure
+```bash
+├───activity
+│       EditTaskActivity.java
+│       MainActivity.java
+│
+├───data
+│   ├───dao
+│   │       AttachmentDao.java
+│   │       TaskDao.java
+│   │
+│   └───db
+│           AppDatabase.java
+│
+├───domain
+│   ├───model
+│   │   │   Attachment.java
+│   │   │   Task.java
+│   │   │
+│   │   └───enums
+│   │           FileType.java
+│   │           NotificationType.java
+│   │           Priority.java
+│   │           SortType.java
+│   │
+│   └───repository
+│           AttachmentRepository.java
+│           TaskRepository.java
+│
+├───presentation
+│   ├───addtask
+│   │       AddTaskFragment.java
+│   │
+│   ├───home
+│   │   │   HomeFragment.java
+│   │   │
+│   │   └───adapter
+│   │           TaskAdapter.java
+│   │
+│   ├───notifications
+│   │   │   NotificationsFragment.java
+│   │   │
+│   │   └───adapter
+│   │           NotificationAdapter.java
+│   │
+│   └───viewmodel
+│           TaskViewModel.java
+│
+└───util
+    ├───converter
+    │       Converters.java
+    │
+    ├───file
+    │   │   FileService.java
+    │   │   TaskTypeJsonAdapter.java
+    │   │
+    │   └───xml
+    │           TaskXml.java
+    │           TaskXmlWrapper.java
+    │
+    ├───lang
+    │       LocalHelper.java
+    │
+    ├───notification
+    │       NotificationUtils.java
+    │
+    └───task
+            BaseTaskAdapter.java
+            TaskFormHelper.java
+```
+- `activity` - containsa Android Activity classes which are entry points of the user interface, such as the main screen (MainActivity) and task editing screen (EditTaskActivity)
+- `data` - data access layer:
+   - `dao` - Data Access Object interfaces used for interacting with the database
+   - `db` - database configuration
+- `domain` - business logic layer:
+   - `model` - classes and enums representing business entities and data models
+   - `repository` - abstract repositories providing a clean API for data access from various sources
+- `presentation` - presentation layer, reponsible for UI and UI-related logic:
+   - `addtask` - fragments handling adding new tasks
+   - `home` - main screen fragment and related adapter for displaying task list
+   - `notifications` - notifications screen and its adapter
+   - `viewmodel` - ViewModel layer managing UI-related data
+- `util` - utility and helper classes supporting the app’s functionality:
+   - `converter` - data converters for Room database and date types
+   - `file` - file-related services, JSON adapters, and XML serialization/deserialization classes
+   - `lang` - language support utilities
+   - `notication` - helper classes for handling notifications
+   - `task` - additional task-related helpers such as base adapter and form helper
+
 ## Setup  
 ### 1. Configure the Android Studio environment
 > [!NOTE]
@@ -60,6 +149,3 @@ git clone https://github.com/krystianbeduch/todo-list.git
 
 ## Setup 
 Functional description
-
-<!-- TREEVIEW START -->
-<!-- TREEVIEW END -->
