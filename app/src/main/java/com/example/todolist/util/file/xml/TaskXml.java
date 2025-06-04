@@ -1,8 +1,6 @@
 package com.example.todolist.util.file.xml;
 
-import android.content.Context;
-
-import com.example.todolist.domain.model.Priority;
+import com.example.todolist.domain.model.enums.Priority;
 import com.example.todolist.domain.model.Task;
 import com.example.todolist.util.converter.Converters;
 

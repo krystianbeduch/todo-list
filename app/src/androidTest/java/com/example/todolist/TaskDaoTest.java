@@ -12,7 +12,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4;
 
 import com.example.todolist.data.dao.TaskDao;
 import com.example.todolist.data.db.AppDatabase;
-import com.example.todolist.domain.model.Priority;
+import com.example.todolist.domain.model.enums.Priority;
 import com.example.todolist.domain.model.Task;
 
 import org.junit.After;

@@ -1,4 +1,4 @@
-package com.example.todolist.domain.model;
+package com.example.todolist.domain.model.enums;
 
 import android.content.Context;
 import com.example.todolist.R;

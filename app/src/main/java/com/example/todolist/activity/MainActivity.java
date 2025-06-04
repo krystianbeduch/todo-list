@@ -11,11 +11,9 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.PopupMenu;
 import android.widget.Toast;
-import android.widget.Toolbar;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
@@ -27,7 +25,7 @@ import androidx.navigation.ui.NavigationUI;
 
 import com.example.todolist.R;
 import com.example.todolist.databinding.ActivityMainBinding;
-import com.example.todolist.domain.model.FileType;
+import com.example.todolist.domain.model.enums.FileType;
 import com.example.todolist.presentation.viewmodel.TaskViewModel;
 import com.example.todolist.util.file.FileService;
 import com.example.todolist.util.lang.LocalHelper;

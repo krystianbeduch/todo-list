@@ -4,13 +4,12 @@ import android.content.Context;
 
 import androidx.room.TypeConverter;
 
-import com.example.todolist.domain.model.Priority;
+import com.example.todolist.domain.model.enums.Priority;
 import com.example.todolist.util.lang.LocalHelper;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
-import java.util.Date;
 import java.util.Locale;
 
 public class Converters {

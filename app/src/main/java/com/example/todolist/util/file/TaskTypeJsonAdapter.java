@@ -1,12 +1,10 @@
 package com.example.todolist.util.file;
 
-import android.content.Context;
-
 import com.google.gson.TypeAdapter;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonWriter;
 
-import com.example.todolist.domain.model.Priority;
+import com.example.todolist.domain.model.enums.Priority;
 import com.example.todolist.domain.model.Task;
 import com.example.todolist.util.converter.Converters;
 

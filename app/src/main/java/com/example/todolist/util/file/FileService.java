@@ -18,8 +18,8 @@ import androidx.core.content.FileProvider;
 
 import com.example.todolist.R;
 import com.example.todolist.data.db.AppDatabase;
-import com.example.todolist.domain.model.FileType;
-import com.example.todolist.domain.model.Priority;
+import com.example.todolist.domain.model.enums.FileType;
+import com.example.todolist.domain.model.enums.Priority;
 import com.example.todolist.domain.model.Task;
 import com.example.todolist.util.converter.Converters;
 import com.example.todolist.util.file.xml.TaskXml;

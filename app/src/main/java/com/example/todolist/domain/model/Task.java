@@ -6,6 +6,9 @@ import androidx.room.Entity;
 import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 
+import com.example.todolist.domain.model.enums.NotificationType;
+import com.example.todolist.domain.model.enums.Priority;
+
 import java.time.LocalDateTime;
 import java.util.List;
 

@@ -12,7 +12,6 @@ import androidx.core.app.NotificationManagerCompat;
 import androidx.core.content.ContextCompat;
 
 import com.example.todolist.R;
-import com.example.todolist.domain.model.NotificationType;
 import com.example.todolist.domain.model.Task;
 import com.example.todolist.util.converter.Converters;
 

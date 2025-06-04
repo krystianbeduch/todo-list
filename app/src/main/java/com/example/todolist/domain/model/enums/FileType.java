@@ -1,4 +1,4 @@
-package com.example.todolist.domain.model;
+package com.example.todolist.domain.model.enums;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

@@ -1,7 +1,7 @@
 package com.example.todolist.presentation.viewmodel;
 import com.example.todolist.domain.model.Attachment;
-import com.example.todolist.domain.model.FileType;
-import com.example.todolist.domain.model.SortType;
+import com.example.todolist.domain.model.enums.FileType;
+import com.example.todolist.domain.model.enums.SortType;
 import com.example.todolist.domain.model.Task;
 import com.example.todolist.domain.repository.AttachmentRepository;
 import com.example.todolist.domain.repository.TaskRepository;

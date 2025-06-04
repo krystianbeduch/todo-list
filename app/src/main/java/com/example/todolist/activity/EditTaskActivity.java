@@ -8,7 +8,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.todolist.R;
 import com.example.todolist.databinding.FragmentTaskFormBinding;
-import com.example.todolist.domain.model.Priority;
+import com.example.todolist.domain.model.enums.Priority;
 import com.example.todolist.domain.model.Task;
 import com.example.todolist.util.converter.Converters;
 import com.example.todolist.util.task.TaskFormHelper;
