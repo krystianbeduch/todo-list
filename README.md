@@ -141,6 +141,8 @@ The `res` folder contains all app resources organized into subdirectories by typ
 - `xml` - miscellaneous XML configurations, including backup rules, file paths, and data extraction settings
 
 ## Database schema
+<img src="https://github.com/krystianbeduch/todo-list/blob/main/readme-images/database-schema.png" alt="Database schema" title="Database schema" height="100">
+
 ![DatabaseSchema](https://github.com/krystianbeduch/todo-list/blob/main/readme-images/database-schema.png)
 
 ## Setup  
@@ -175,6 +177,7 @@ Each task item displays the following information:
 - Completion status — represented by a ✔ symbol when the task is marked as completed
 - Attachment icon — displayed if one or more attachments are associated with the task, indicating additional files or resources linked to it
 
+<img src="https://github.com/krystianbeduch/todo-list/blob/main/readme-images/list-of-tasks.jpg" alt="List of tasks" title="List of tasks" height="100">
 ![ListOfTasks](https://github.com/krystianbeduch/todo-list/blob/main/readme-images/list-of-tasks.jpg)
 
 This setup provides a clear and informative overview of all tasks, helping users to easily track, prioritize, and manage their work
