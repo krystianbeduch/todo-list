@@ -287,19 +287,19 @@ public class HomeFragment extends Fragment {
     }
 
     private void insertDummyTasks() {
-        taskViewModel.insert(new Task("Kupić mleko",
+        taskViewModel.insert(new Task("Do the shopping",
                 LocalDateTime.now().plusDays(5).with(LocalTime.of(12, 0)), true, Priority.HIGH, LocalDateTime.now()));
-        taskViewModel.insert(new Task("Zadanie z matematyki",
+        taskViewModel.insert(new Task("Gym session",
                 LocalDateTime.now().plusDays(3).with(LocalTime.of(14, 30)), false, Priority.MEDIUM, LocalDateTime.now()));
-        taskViewModel.insert(new Task("Siłownia",
+        taskViewModel.insert(new Task("Team meeting",
                 LocalDateTime.now().plusDays(15).with(LocalTime.of(7, 25)), false, Priority.MEDIUM, LocalDateTime.now()));
-        taskViewModel.insert(new Task("Wynieść śmieci",
+        taskViewModel.insert(new Task("Dentist appointment",
                 LocalDateTime.now().plusDays(25).with(LocalTime.of(9, 50)), false, Priority.LOW, LocalDateTime.now()));
-        taskViewModel.insert(new Task("Spotkanie z zespołem",
+        taskViewModel.insert(new Task("Project deadline",
                 LocalDateTime.now().plusDays(2).with(LocalTime.of(18, 0)), true, Priority.LOW, LocalDateTime.now()));
-        taskViewModel.insert(new Task("Zrobić zakupy",
+        taskViewModel.insert(new Task("Finish reading the book",
                 LocalDateTime.now().with(LocalTime.of(23, 59)), false, Priority.HIGH, LocalDateTime.now()));
-        taskViewModel.insert(new Task("Zadanie nieudane",
+        taskViewModel.insert(new Task("Water the plants",
                 LocalDateTime.now().minusDays(3), false, Priority.HIGH, LocalDateTime.now()));
     }
 

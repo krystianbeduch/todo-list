@@ -1,5 +1,6 @@
 package com.example.todolist.activity;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.widget.Toast;
 
@@ -11,6 +12,7 @@ import com.example.todolist.databinding.FragmentTaskFormBinding;
 import com.example.todolist.domain.model.enums.Priority;
 import com.example.todolist.domain.model.Task;
 import com.example.todolist.util.converter.Converters;
+import com.example.todolist.util.lang.LocalHelper;
 import com.example.todolist.util.task.TaskFormHelper;
 
 public class EditTaskActivity extends AppCompatActivity {
@@ -55,6 +57,11 @@ public class EditTaskActivity extends AppCompatActivity {
             binding.taskPriority.setSelection(Priority.getPriorityIndex(task.getPriority()));
             binding.taskSaveButton.setOnClickListener(v -> helper.handleSave(updatedTask -> finish(), true, taskToEdit));
         });
+    }
+
+    @Override
+    protected void attachBaseContext(Context newBase) {
+        super.attachBaseContext(LocalHelper.applySavedLocale(newBase));
     }
 
     @Override
