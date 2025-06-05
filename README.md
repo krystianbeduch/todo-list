@@ -212,7 +212,7 @@ The application provides a flexible and intuitive interface for managing tasks.
    - Priority
    - Status <br>
 <p align="center">
-   <img src="https://github.com/krystianbeduch/todo-list/blob/main/readme-images/managing-tasks-menu.jpg" alt="Managing tasks menu" title="Managing tasks menu" height="800">
+   <img src="https://github.com/krystianbeduch/todo-list/blob/main/readme-images/managing-tasks-menu.jpg" alt="Managing tasks - menu" title="Managing tasks - menu" height="800">
    <img src="https://github.com/krystianbeduch/todo-list/blob/main/readme-images/managing-tasks-sort-by-priority.jpg" alt="Managing tasks - sort by priority" title="Managing tasks - sort by priority" height="800"> 
 </p>
 
@@ -221,7 +221,7 @@ Selecting the `Edit` option from a task’s context menu navigates the user to a
 The interface presents a form identical to the one used for adding a new task. However, the form fields are pre-filled with the existing task data.
 The user can update any of these values and save the changes. The form retains the same validation mechanisms.
 <p align="center">
-   <img src="https://github.com/krystianbeduch/todo-list/blob/main/readme-images/edit-task.jpg" alt="Edit task" title="edit-task" height="800">
+   <img src="https://github.com/krystianbeduch/todo-list/blob/main/readme-images/edit-task.jpg" alt="Edit task" title="Edit task" height="800">
 </p>
 
 ### Managing attachments
@@ -243,7 +243,7 @@ The app implements a notification system to help users stay on top of their task
    - __"Task deadline has passed"__ for overdue tasks
    - __"Upcoming task deadline"__ for tasks whose deadline is approaching within 24 hours
 <p align="center">  
-   <img src="https://github.com/krystianbeduch/todo-list/blob/main/readme-images/notification-mechanism.jpg" alt="Notification mechanism" title="Notification mechanism" height="800">
+   <img src="https://github.com/krystianbeduch/todo-list/blob/main/readme-images/notification-mechanism.jpg" alt="Notification mechanism" title="Notification mechanism" height="300">
    <img src="https://github.com/krystianbeduch/todo-list/blob/main/readme-images/notification-fragment.jpg" alt="Notification fragment" title="Notification fragment" height="800">
 </p>
 
