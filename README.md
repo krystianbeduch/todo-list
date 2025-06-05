@@ -175,7 +175,7 @@ Each task item displays the following information:
 - Completion status — represented by a ✔ symbol when the task is marked as completed
 - Attachment icon — displayed if one or more attachments are associated with the task, indicating additional files or resources linked to it
 
-<img src="https://github.com/krystianbeduch/todo-list/blob/main/readme-images/list-of-tasks.jpg" alt="List of tasks" title="List of tasks" height="800">
+<img src="https://github.com/krystianbeduch/todo-list/blob/main/readme-images/list-of-tasks.jpg" alt="List of tasks" title="List of tasks" height="800" align="center">
 
 This setup provides a clear and informative overview of all tasks, helping users to easily track, prioritize, and manage their work
 
