@@ -141,7 +141,7 @@ The `res` folder contains all app resources organized into subdirectories by typ
 - `xml` - miscellaneous XML configurations, including backup rules, file paths, and data extraction settings
 
 ## Database schema
-<img src="https://github.com/krystianbeduch/todo-list/blob/main/readme-images/database-schema.png" alt="Database schema" title="Database schema" height="350" center>
+<img src="https://github.com/krystianbeduch/todo-list/blob/main/readme-images/database-schema.png" alt="Database schema" title="Database schema" height="350" style="text-align='center;'">
 
 ![DatabaseSchema](https://github.com/krystianbeduch/todo-list/blob/main/readme-images/database-schema.png)
 
