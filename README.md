@@ -242,9 +242,9 @@ The app implements a notification system to help users stay on top of their task
 - Accessible via the bottom navigation menu, the `Notifications` fragment displays the total count of tasks with active notifications. Inside this fragment, users can see detailed information about each task along with the notification type:
    - __"Task deadline has passed"__ for overdue tasks
    - __"Upcoming task deadline"__ for tasks whose deadline is approaching within 24 hours
-<p align="center">  
-   <img src="https://github.com/krystianbeduch/todo-list/blob/main/readme-images/notification-mechanism.jpg" alt="Notification mechanism" title="Notification mechanism" height="300">
+<p align="center">
    <img src="https://github.com/krystianbeduch/todo-list/blob/main/readme-images/notification-fragment.jpg" alt="Notification fragment" title="Notification fragment" height="800">
+   <img src="https://github.com/krystianbeduch/todo-list/blob/main/readme-images/notification-mechanism.jpg" alt="Notification mechanism" title="Notification mechanism" height="500">
 </p>
 
 ### Import and export of task list to files
