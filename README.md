@@ -313,6 +313,7 @@ ID;Title;Deadline;Priority;Status;Created at
 The application allow users to switch between available languages: Polish and English. There are two ways to change the language:
 - Through the `More` Section - in the bottom navigation menu, under the `More` tab, users can select the preferred language from the available options. Selecting a language immediately updates the app's interface to reflect the new setting.
 - Language icon on the toolbar - the `Home` screen _Toolbar_ displays a flag icon representing the currently selected language. Tapping on this icon also allows the user to toggle between languages quickly and intuitively.
-
-<img src="https://github.com/krystianbeduch/todo-list/blob/main/readme-images/changing-app-language-to-polish.jpg" alt="Changing app language to polish" title="Changing app language to polish" height="800">
+<p align="center">
+   <img src="https://github.com/krystianbeduch/todo-list/blob/main/readme-images/changing-app-language-to-polish.jpg" alt="Changing app language to polish" title="Changing app language to polish" height="800">
+</p>
 
