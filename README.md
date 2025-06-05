@@ -244,7 +244,7 @@ The app implements a notification system to help users stay on top of their task
    - __"Upcoming task deadline"__ for tasks whose deadline is approaching within 24 hours
 <p align="center">
    <img src="https://github.com/krystianbeduch/todo-list/blob/main/readme-images/notification-fragment.jpg" alt="Notification fragment" title="Notification fragment" height="800">
-   <img src="https://github.com/krystianbeduch/todo-list/blob/main/readme-images/notification-mechanism.jpg" alt="Notification mechanism" title="Notification mechanism" height="500">
+   <img src="https://github.com/krystianbeduch/todo-list/blob/main/readme-images/notification-mechanism.jpg" alt="Notification mechanism" title="Notification mechanism" height="400">
 </p>
 
 ### Import and export of task list to files
