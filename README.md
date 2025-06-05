@@ -209,8 +209,10 @@ The application provides a flexible and intuitive interface for managing tasks.
    - Deadline
    - Priority
    - Status <br>
-<img src="https://github.com/krystianbeduch/todo-list/blob/main/readme-images/managing-tasks-menu.jpg" alt="Managing tasks menu" title="Managing tasks menu" height="800">
-<img src="https://github.com/krystianbeduch/todo-list/blob/main/readme-images/managing-tasks-sort-by-priority.jpg" alt="Managing tasks - sort by priority" title="Managing tasks - sort by priority" height="800"> 
+<p align="center">
+   <img src="https://github.com/krystianbeduch/todo-list/blob/main/readme-images/managing-tasks-menu.jpg" alt="Managing tasks menu" title="Managing tasks menu" height="800">
+   <img src="https://github.com/krystianbeduch/todo-list/blob/main/readme-images/managing-tasks-sort-by-priority.jpg" alt="Managing tasks - sort by priority" title="Managing tasks - sort by priority" height="800"> 
+</p>
 
 ### Edit Task
 Selecting the `Edit` option from a task’s context menu navigates the user to a dedicated activity for editing. 
