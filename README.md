@@ -27,7 +27,7 @@ The application is a task planner designed to help you organize your daily activ
 - User can add attachments (eg. images, videos or PDF documents) to tasks, view them or delete them as needed
 - A notification mechanism sends reminders about upcoming deadlines and alerts the user when a task is overdue
 - Import and export task list to files allows you to save the task list to a file or upload new tasks, supporting CSV, JSON and XML file formats
-- USer can change the language of the application at any time: Polish and English
+- User can change the language of the application at any time: Polish and English
 
 ## Technology
 - Android SDK 35 (min. SDK 27)
