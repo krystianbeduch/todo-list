@@ -146,7 +146,7 @@ The `res` folder contains all app resources organized into subdirectories by typ
 ## Setup  
 ### 1. Configure the Android Studio environment
 > [!NOTE]
-> This project was developed using the _Ladybug_ version of Android Studio.
+> This project was developed using the _Ladybug_ version of Android Studio.<br>
 > You do not need to install a separate JDK, as Android Studio includes its own buit-in JDK.
 
 ### 2. Download or clone the project
